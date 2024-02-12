@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 
 load_dotenv()
 
@@ -31,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'drf_yasg',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
 
@@ -149,3 +151,19 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=180),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    'BLACKLIST_AFTER_ROTATION': True,
+
+    'AUTH_HEADER_TYPES': ('Bearer',),
+
+    # custom
+    "AUTH_COOKIE": "access_token",  # cookie name
+    "AUTH_COOKIE_DOMAIN": None,  # specifies domain for which the cookie will be sent
+    "AUTH_COOKIE_SECURE": False,  # restricts the transmission of the cookie to only occur over secure (HTTPS) connections. 
+    "AUTH_COOKIE_HTTP_ONLY": True,  # prevents client-side js from accessing the cookie
+    "AUTH_COOKIE_PATH": "/",  # URL path where cookie will be sent
+    "AUTH_COOKIE_SAMESITE": "Lax",  # specifies whether the cookie should be sent in cross site requests
+}

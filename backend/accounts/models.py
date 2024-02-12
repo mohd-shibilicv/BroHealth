@@ -39,7 +39,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=10, choices=GENDERS, null=True, blank=True)
     address = models.TextField(blank=True)
-    mobile_number = models.CharField(max_length=15)
+    mobile_number = models.CharField(max_length=15, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

@@ -7,17 +7,17 @@ from accounts.models import User
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     # Specify the fields to display in the list view
-    list_display = ('email', 'first_name', 'last_name', 'is_staff', 'is_active')
+    list_display = ('email', 'first_name', 'last_name', 'role', 'is_staff', 'is_active')
     
     # Specify the ordering of the list view
     ordering = ('email',)
     
     # Specify the fields to be used in searching
-    search_fields = ('email', 'first_name', 'last_name')
+    search_fields = ('email', 'first_name', 'last_name', 'role')
     
     # Specify the fields to be displayed in the detail view
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('email', 'password', 'role')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'date_of_birth', 'gender', 'address', 'mobile_number', 'profile_picture')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
     )
