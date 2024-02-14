@@ -4,29 +4,33 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import PrivateRoute from "./components/PrivateRoute";
+import ProtectedRoute from "./routes/ProtectedRoute";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import { Route, Routes } from "react-router-dom";
-import DashboardPage from "./pages/DashboardPage";
+import DashboardPage from "./pages/Patients/DashboardPage";
 import Footer from "./components/Footer";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import ForgotPassword from "./components/Patients/ForgotPassword";
 
 function App() {
-  const [count, setCount] = useState(0);
 
   return (
     <>
       <div>
+        <Navbar />
         <Routes>
-          <Route path="/" element={<RegisterPage />} />
+          <Route path="/" element={<Home />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route
             path="/dashboard"
             element={
-              <PrivateRoute>
+              <ProtectedRoute>
                 <DashboardPage />
-              </PrivateRoute>
+              </ProtectedRoute>
             }
           />
           {/* Other routes */}

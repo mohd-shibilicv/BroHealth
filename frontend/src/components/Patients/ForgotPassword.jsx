@@ -10,38 +10,37 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import authSlice from "../../store/slices/auth.js";
 
-export default function LoginForm() {
+const ForgotPassword = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
-
-    axios
-      .post(`${import.meta.env.VITE_APP_API_URL}/auth/login/`, { email, password })
-      .then((res) => {
-        dispatch(
-          authSlice.actions.setAuthTokens({
-            token: res.data.access,
-            refreshToken: res.data.refresh,
-          })
-        );
-        dispatch(authSlice.actions.setAccount(res.data.user));
-        setLoading(false);
-        navigate("/");
-      })
-      .catch((err) => {
-        setLoading(false)
-        setError(err.response.data.detail ? err.response.data.detail.toString() : "Invalid Credentials" );
-      });
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/patients/login/",
+        {
+          email,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      // Store tokens in local storage or cookies
+      localStorage.setItem("access_token", response.data.access);
+      localStorage.setItem("refresh_token", response.data.refresh);
+      navigate("/");
+    } catch (err) {
+      if (err.response && err.response.data) {
+        setError(err.response.data.non_field_errors || "An error occurred.");
+      } else {
+        setError("An error occurred.");
+      }
+    }
   };
 
   return (
@@ -57,13 +56,13 @@ export default function LoginForm() {
           }}
         >
           <Typography component="h1" variant="h5">
-            Sign in
+            Forgot Password
           </Typography>
           <Box
             component="form"
             onSubmit={handleSubmit}
             noValidate
-            sx={{ mt: 1, width: 500 }}
+            sx={{ mt: 5, width: 500 }}
           >
             {error && (
               <p className="mx-auto flex justify-center bg-red-100 text-red-600 px-5 py-3 rounded">
@@ -82,18 +81,6 @@ export default function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
             <Button
               type="submit"
               fullWidth
@@ -111,13 +98,7 @@ export default function LoginForm() {
                 },
               }}
             >
-              {loading ? (
-                <div className="animate-spin inline-block w-6 h-6 border-[3px] border-current border-t-transparent text-yellow-1000 rounded-full" role="status" aria-label="loading">
-                  <span className="sr-only">Loading...</span>
-                </div>
-              ) : (
-                <p>Sign In</p>
-              )}
+              Send
             </Button>
             <Grid container>
               <Grid item>
@@ -130,12 +111,11 @@ export default function LoginForm() {
                 </Link>
               </Grid>
             </Grid>
-            <div className="mt-2 hover:underline">
-              <Link to="/forgot-password">{"Forgot password?"}</Link>
-            </div>
           </Box>
         </Box>
       </Container>
     </>
   );
-}
+};
+
+export default ForgotPassword;

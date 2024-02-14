@@ -12,6 +12,8 @@ import Container from "@mui/material/Container";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import authSlice from "../../store/slices/auth.js";
 import "react-toastify/dist/ReactToastify.css";
 
 function RegistrationForm() {
@@ -21,13 +23,25 @@ function RegistrationForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Function to validate the form fields
   const validateInput = (fieldName, value) => {
     let errorMessage = "";
 
     switch (fieldName) {
+      case "firstname":
+        if (!value || !/^[a-zA-Z\s'-]+$/.test(value)) {
+          errorMessage = "Please enter a valid firstname";
+        }
+        break;
+      case "lastname":
+        if (!value || !/^[a-zA-Z\s'-]+$/.test(value)) {
+          errorMessage = "Please enter a valid lastname";
+        }
+        break;
       case "email":
         if (!value || !/\S+@\S+\.\S+/.test(value)) {
           errorMessage = "Please enter a valid email address";
@@ -37,8 +51,6 @@ function RegistrationForm() {
         if (!value || value.length < 8) {
           errorMessage = "Password must be at least 8 characters long";
         }
-        break;
-      case "confirm-password":
         break;
       default:
         break;
@@ -81,21 +93,49 @@ function RegistrationForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
 
-    const isValid = Object.values(errors).every((error) => !error);
-    if (!isValid) {
+    // Reset errors before validation
+    setErrors({});
+
+    // Validate the form fields manually
+    const validationErrors = {};
+    if (!firstname || !/^[a-zA-Z\s'-]+$/.test(firstname)) {
+      validationErrors.firstname = "Please enter a valid firstname";
+    }
+    if (!lastname || !/^[a-zA-Z\s'-]+$/.test(lastname)) {
+      validationErrors.lastname = "Please enter a valid firstname";
+    }
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      validationErrors.email = "Please enter a valid email address";
+    }
+    if (!password || password.length < 8) {
+      validationErrors.password =
+        "Password must be at least  8 characters long";
+    }
+    if (password !== confirmPassword) {
+      validationErrors.confirmPassword = "Passwords do not match";
+    }
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setLoading(false);
       return;
     }
 
     const formData = new FormData();
     formData.append("email", email);
     formData.append("password", password);
-    formData.append("first_name", firstname);
-    formData.append("last_name", lastname);
+    formData.append("confirm_password", confirmPassword);
+    if (firstname) {
+      formData.append("first_name", firstname);
+    }
+    if (lastname) {
+      formData.append("last_name", lastname);
+    }
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/patients/register/",
+        `${import.meta.env.VITE_APP_API_URL}/auth/register/`,
         formData,
         {
           headers: {
@@ -103,19 +143,37 @@ function RegistrationForm() {
           },
         }
       );
-      // Display success message to the user
-      toast.success("Registration successful!");
-      // Redirect to login page after a delay
+      setLoading(false);
+      toast.success("Registration successful!", {
+        style: {
+          background: "#000",
+          color: "#fff",
+        },
+        position: "bottom-right",
+        pauseOnHover: true,
+        draggable: true,
+      });
       setTimeout(() => {
         navigate("/login");
       }, 3000);
     } catch (error) {
+      setLoading(false);
       if (error.response && error.response.data) {
+        console.log(error);
         const backendErrors = error.response.data;
+        // Handle non-field errors
+        if (backendErrors.non_field_errors) {
+          backendErrors.non_field_errors.forEach((errorMsg) => {
+            toast.error(errorMsg);
+          });
+        }
+        // Handle field-specific errors
         setErrors((prevErrors) => ({
           ...prevErrors,
           ...backendErrors,
         }));
+        setPassword("");
+        setConfirmPassword("");
       } else {
         console.error(error);
       }
@@ -137,19 +195,28 @@ function RegistrationForm() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ mt: 3, width: 500 }}
+        >
           <Grid container spacing={2} className="m-2 important">
             <Grid item xs={12} sm={6}>
+              {errors.non_field_errors  && (
+                <p className="mx-auto flex justify-center bg-red-100 text-red-600 px-5 py-3 rounded">
+                  {errors.non_field_errors.join(", ")}
+                </p>
+              )}
               <TextField
                 autoComplete="given-name"
                 name="firstname"
                 fullWidth
                 id="firstname"
                 label="First Name"
-                alue={firstname}
+                value={firstname}
                 onChange={handleInputChange}
-                error={!!errors.firstname}
-                helperText={errors.firstname}
+                error={!!errors["firstname"]}
+                helperText={errors["firstname"]}
                 autoFocus
               />
             </Grid>
@@ -160,7 +227,7 @@ function RegistrationForm() {
                 label="Last Name"
                 name="lastname"
                 autoComplete="family-name"
-                alue={lastname}
+                value={lastname}
                 onChange={handleInputChange}
                 error={!!errors.lastname}
                 helperText={errors.lastname}
@@ -178,8 +245,8 @@ function RegistrationForm() {
               autoComplete="email"
               value={email}
               onChange={handleInputChange}
-              error={!!errors.email}
-              helperText={errors.email}
+              error={!!errors["email"]}
+              helperText={errors["email"]}
             />
           </Grid>
           <Grid item xs={12} mt={2}>
@@ -216,14 +283,35 @@ function RegistrationForm() {
           <Button
             type="submit"
             fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            variant="outlined"
+            sx={{
+              mt: 3,
+              mb: 2,
+              color: "white",
+              backgroundColor: "rgb(17  24  39 /  1)",
+              borderColor: "black",
+              "&:hover": {
+                backgroundColor: "rgb(17  24  39 / 0)",
+                borderColor: "black",
+                color: "black",
+              },
+            }}
           >
-            Sign Up
+            {loading ? (
+              <div
+                className="animate-spin inline-block w-6 h-6 border-[3px] border-current border-t-transparent text-yellow-1000 rounded-full"
+                role="status"
+                aria-label="loading"
+              >
+                <span className="sr-only">Loading...</span>
+              </div>
+            ) : (
+              <p>Sign Up</p>
+            )}
           </Button>
           <Grid container>
             <Grid item>
-              <Link to="/login" variant="body2">
+              <Link to="/login" className="hover:underline" variant="body2">
                 Already have an account? Sign in
               </Link>
             </Grid>
