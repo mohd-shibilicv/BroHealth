@@ -59,3 +59,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         super(User, self).__init__(*args, **kwargs)
         if not self.profile_picture:
             self.profile_picture = 'profile_pictures/default_user.png'
+
+
+class PasswordReset(models.Model):
+    email = models.EmailField()
+    token = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
