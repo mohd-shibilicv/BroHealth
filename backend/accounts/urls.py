@@ -7,5 +7,5 @@ from core.viewsets import VerifyAccountView
 app_name = 'accounts'
 
 urlpatterns = [
-    path('activate/<slug:uidb64>/<slug:token>/', VerifyAccountView.as_view(), name='activate')
+    path('api/auth/activate/<slug:uidb64>/<slug:token>/', VerifyAccountView.as_view({'get': 'retrieve'}), name='activate')
 ]

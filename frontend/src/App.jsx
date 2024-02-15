@@ -14,6 +14,7 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import ForgotPassword from "./components/Patients/ForgotPassword";
 import AuthenticatedRoute from "./routes/AuthenticatedRoute";
+import ActivationPage from "./components/Patients/ActivationPage";
 
 function App() {
   return (
@@ -47,7 +48,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* Other routes */}
+          <Route path="/activate" element={<ActivationPage />} />
         </Routes>
         <Footer />
       </div>

@@ -144,7 +144,7 @@ function RegistrationForm() {
         }
       );
       setLoading(false);
-      toast.success("Registration successful!", {
+      toast.success("Registration successful!\n Activation email is sent!", {
         style: {
           background: "#000",
           color: "#fff",
@@ -156,6 +156,9 @@ function RegistrationForm() {
       setTimeout(() => {
         navigate("/login");
       }, 3000);
+      setTimeout(() => {
+        navigate("/login");
+      }, 5000);
     } catch (error) {
       setLoading(false);
       if (error.response && error.response.data) {

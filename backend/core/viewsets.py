@@ -1,3 +1,4 @@
+import os
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.sites.shortcuts import get_current_site
@@ -57,15 +58,18 @@ class RegistrationViewSet(ModelViewSet):
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         expiration_date = timezone.now() + timedelta(days=1)
-        # activation_link = reverse('accounts:activate', kwargs={'uidb64': uid, 'token': token})
+
+        # Construct the frontend activation URL
+        frontend_base_url = os.getenv('FRONTEND_BASE_URL')
+        activation_route = os.getenv('ACCOUNT_ACTIVATION_ROUTE')
+        activation_url = f"{frontend_base_url}/{activation_route}?uid={uid}&token={token}"
         
         # Send the activation email
         mail_subject = 'Activate your account'
         message = render_to_string('acc_activation_email.html', {
             'user': user,
             'domain': get_current_site(request).domain,
-            'uid': uid,
-            'token': token,
+            'activation_url': activation_url,
             'protocol': request.scheme,
         })
         email = EmailMessage(mail_subject, message, to=[user.email])
@@ -79,10 +83,10 @@ class RegistrationViewSet(ModelViewSet):
         }, status=status.HTTP_201_CREATED)
 
 
-class VerifyAccountView(APIView):
+class VerifyAccountView(viewsets.ViewSet):
     permission_classes = (AllowAny,)
 
-    def get(self, request, uidb64, token, *args, **kwargs):
+    def retrieve(self, request, uidb64, token):
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = get_user_model().objects.get(pk=uid)
