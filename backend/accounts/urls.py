@@ -1,10 +1,11 @@
 from django.urls import path, include
 
 from accounts import views
+from core.viewsets import VerifyAccountView
 
 
 app_name = 'accounts'
 
 urlpatterns = [
-    path('logout/', views.LogoutView.as_view(), name='logout')
+    path('activate/<slug:uidb64>/<slug:token>/', VerifyAccountView.as_view(), name='activate')
 ]

@@ -10,6 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from accounts.serializers import UserSerializer
 from accounts.models import User
+from patients.models import Patient
 
 
 class LoginSerializer(TokenObtainPairSerializer):
@@ -56,11 +57,13 @@ class RegisterSerializer(UserSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'password']
+        fields = ['id', 'first_name', 'last_name', 'email', 'password', 'is_active']
 
     def create(self, validated_data):
+        validated_data['role'] = 'patient'
         try:
             user = User.objects.get(email=validated_data['email'])
         except ObjectDoesNotExist:
             user = User.objects.create_user(**validated_data)
+            Patient.objects.create(user=user)
         return user

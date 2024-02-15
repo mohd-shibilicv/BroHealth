@@ -13,9 +13,8 @@ from accounts.serializers import UserSerializer
 
 class PatientSerializer(serializers.ModelSerializer):
     """
-    A Serializer for the Patient Model, That use nested UserSerializer.
+    A Serializer for the Patient Model, That uses a nested UserSerializer.
     """
-    user = UserSerializer()
 
     class Meta:
         model = Patient

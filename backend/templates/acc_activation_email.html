@@ -1,0 +1,10 @@
+{% autoescape off %}
+Hi {{ user.first_name }},
+
+Please click the link below to activate your account:
+
+{{ protocol }}://{{ domain }}{% url 'accounts:activate' uidb64=uid token=token %}
+
+Thanks,
+The BroHealth Team
+{% endautoescape %}
