@@ -6,61 +6,46 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
+import authSlice from "../../store/slices/auth.js";
 
-const ForgotPassword = () => {
+export default function LoginForm() {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true)
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_APP_API_URL}/auth/reset-password/`,
-        {
-          email,
-        },
-      );
-      
-      setLoading(false)
-      toast.success("Password reset confimation email has been sent!", {
-        style: {
-          background: "#000",
-          color: "#fff",
-        },
-        position: "bottom-right",
-        pauseOnHover: true,
-        draggable: true,
+
+    axios
+      .post(`${import.meta.env.VITE_APP_API_URL}/auth/login/`, { email, password })
+      .then((res) => {
+        dispatch(
+          authSlice.actions.setAuthTokens({
+            token: res.data.access,
+            refreshToken: res.data.refresh,
+          })
+        );
+        dispatch(authSlice.actions.setAccount(res.data.user));
+        setLoading(false);
+        navigate("/");
+      })
+      .catch((err) => {
+        setLoading(false)
+        setError(err.response.data.detail ? err.response.data.detail.toString() : "Invalid Credentials" );
       });
-      setTimeout(() => {
-        navigate("/login");
-      }, 3000);
-      
-    } catch (err) {
-      if (err.response && err.response.data) {
-        setLoading(false)
-        console.log(err.response);
-        setError(err.response.data.non_field_errors || "An error occurred.");
-      } else {
-        setLoading(false)
-        console.log(err);
-        setError("An error occurred.");
-      }
-    }
   };
 
   return (
     <>
       <Container component="main" maxWidth="xs">
-        <ToastContainer />
         <CssBaseline />
         <Box
           sx={{
@@ -71,13 +56,13 @@ const ForgotPassword = () => {
           }}
         >
           <Typography component="h1" variant="h5">
-            Forgot Password
+            Doctor Sign in
           </Typography>
           <Box
             component="form"
             onSubmit={handleSubmit}
             noValidate
-            sx={{ mt: 5, width: 500 }}
+            sx={{ mt: 1, width: 500 }}
           >
             {error && (
               <p className="mx-auto flex justify-center bg-red-100 text-red-600 px-5 py-3 rounded">
@@ -95,6 +80,18 @@ const ForgotPassword = () => {
               autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <Button
               type="submit"
@@ -118,7 +115,7 @@ const ForgotPassword = () => {
                   <span className="sr-only">Loading...</span>
                 </div>
               ) : (
-                <p>Send</p>
+                <p>Sign In</p>
               )}
             </Button>
             <Grid container>
@@ -132,11 +129,12 @@ const ForgotPassword = () => {
                 </Link>
               </Grid>
             </Grid>
+            <div className="mt-2 hover:underline">
+              <Link to="/forgot-password">{"Forgot password?"}</Link>
+            </div>
           </Box>
         </Box>
       </Container>
     </>
   );
-};
-
-export default ForgotPassword;
+}

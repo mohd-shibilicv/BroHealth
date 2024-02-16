@@ -1,4 +1,6 @@
 import os
+from django.utils import timezone
+from datetime import datetime, timedelta
 from rest_framework import viewsets, generics
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -6,12 +8,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import filters
 from rest_framework import status
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-
+from rest_framework.exceptions import ValidationError
 
 from accounts.models import User, PasswordReset
 from accounts.serializers import UserSerializer, ResetPasswordRequestSerializer, ResetPasswordSerializer
@@ -77,17 +80,21 @@ class RequestPasswordReset(generics.GenericAPIView):
             reset_url = f"{frontend_base_url}/{password_reset_route}?token={token}"
 
             # Render the email message
-            context = {'user': user, 'reset_url': reset_url}
-            message = render_to_string('password_reset_email.html', context)
+            html_message = render_to_string('password_reset_email.html', {
+                'user': user,
+                'reset_url': reset_url
+            })
 
             # Create the email message
-            email_message = EmailMessage(
+            email_message = EmailMultiAlternatives(
                 "Password Reset Request",
-                message,
-                to=[email],
+                "Please use the link below to reset your password.",
+                settings.EMAIL_HOST_USER,
+                [user.email],
             )
 
             # Send the email
+            email_message.attach_alternative(html_message, "text/html")
             email_message.send()
 
             return Response({'success': 'We have sent you a link to reset your password'}, status=status.HTTP_200_OK)
@@ -101,9 +108,12 @@ class ResetPassword(generics.GenericAPIView):
 
     def post(self, request, token):
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as e:
+            return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
         data = serializer.validated_data
-        
+
         new_password = data['new_password']
         confirm_password = data['confirm_password']
 
@@ -114,6 +124,9 @@ class ResetPassword(generics.GenericAPIView):
 
         if not reset_obj:
             return Response({'error':'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if timezone.now() > reset_obj.created_at + timedelta(hours=24):
+            return Response({'message': 'Reset password link has expired!'}, status=status.HTTP_400_BAD_REQUEST);
         
         user = User.objects.filter(email=reset_obj.email).first()
 

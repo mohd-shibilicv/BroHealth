@@ -5,8 +5,9 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import ProtectedRoute from "./routes/ProtectedRoute";
-import RegisterPage from "./pages/RegisterPage";
-import LoginPage from "./pages/LoginPage";
+import PatientRegisterPage from "./pages/Patients/RegisterPage";
+import DoctorRegisterPage from "./pages/Doctors/RegisterPage";
+import PatientLoginPage from "./pages/Patients/LoginPage";
 import { Route, Routes } from "react-router-dom";
 import DashboardPage from "./pages/Patients/DashboardPage";
 import Footer from "./components/Footer";
@@ -15,6 +16,7 @@ import Home from "./pages/Home";
 import ForgotPassword from "./components/Patients/ForgotPassword";
 import AuthenticatedRoute from "./routes/AuthenticatedRoute";
 import ActivationPage from "./components/Patients/ActivationPage";
+import ForgotPasswordReset from "./components/Patients/ForgotPasswordReset";
 
 function App() {
   return (
@@ -27,19 +29,21 @@ function App() {
             path="/register"
             element={
               <AuthenticatedRoute>
-                <RegisterPage />
+                <PatientRegisterPage />
               </AuthenticatedRoute>
             }
           />
+          <Route path="/register-doctor" element={<DoctorRegisterPage />} />
           <Route
             path="/login"
             element={
               <AuthenticatedRoute>
-                <LoginPage />
+                <PatientLoginPage />
               </AuthenticatedRoute>
             }
           />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ForgotPasswordReset />} />
           <Route
             path="/dashboard"
             element={

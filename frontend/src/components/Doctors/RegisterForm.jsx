@@ -124,7 +124,7 @@ function RegistrationForm() {
 
     const formData = new FormData();
     formData.append("email", email);
-    formData.append("role", "patient");
+    formData.append("role", "doctor");
     formData.append("password", password);
     formData.append("confirm_password", confirmPassword);
     if (firstname) {
@@ -193,11 +193,11 @@ function RegistrationForm() {
         }}
       >
         <Typography component="h1" variant="h4">
-          Sign up
+          Doctor Registration
         </Typography>
-        <Link to='/register-doctor' className="mt-2">
+        <Link to='/register' className="mt-2">
           <Typography component="a" variant="subtitle1" className="hover:underline">
-            Are you a doctor?
+            Are you a patient?
           </Typography>
         </Link>
         <Box

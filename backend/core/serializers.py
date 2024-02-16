@@ -4,13 +4,13 @@ from rest_framework_simplejwt.settings import api_settings
 from django.contrib.auth.models import update_last_login
 from django.core.validators import MinLengthValidator, RegexValidator
 from django.contrib.auth.password_validation import validate_password
-
 from rest_framework.validators import UniqueValidator
 from django.core.exceptions import ObjectDoesNotExist
 
 from accounts.serializers import UserSerializer
 from accounts.models import User
 from patients.models import Patient
+from doctors.models import Doctor
 
 
 class LoginSerializer(TokenObtainPairSerializer):
@@ -54,16 +54,27 @@ class RegisterSerializer(UserSerializer):
             'required': 'Password is required.'
         }
     )
+    role = serializers.CharField(max_length=20, required=True)
 
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'password', 'is_active']
+        fields = ['id', 'role', 'first_name', 'last_name', 'email', 'password', 'is_active']
 
     def create(self, validated_data):
-        validated_data['role'] = 'patient'
+        role = validated_data.pop('role', None)
+
         try:
             user = User.objects.get(email=validated_data['email'])
         except ObjectDoesNotExist:
             user = User.objects.create_user(**validated_data)
+
+        if role == 'doctor':
+            Doctor.objects.create(user=user)
+            user.role = 'doctor'
+            user.save()
+        elif role == 'patient':
             Patient.objects.create(user=user)
+            user.role = 'patient'
+            user.save()
+
         return user

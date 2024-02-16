@@ -1,12 +1,10 @@
 import os
 from datetime import timedelta
 from django.utils import timezone
-from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.core.mail import EmailMessage
-from django.urls import reverse
+from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_str
@@ -23,6 +21,7 @@ from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 
 from core.serializers import LoginSerializer, RegisterSerializer
 from patients.models import Patient
+from doctors.models import Doctor
 
 
 class LoginViewSet(ModelViewSet, TokenObtainPairView):
@@ -63,17 +62,24 @@ class RegistrationViewSet(ModelViewSet):
         frontend_base_url = os.getenv('FRONTEND_BASE_URL')
         activation_route = os.getenv('ACCOUNT_ACTIVATION_ROUTE')
         activation_url = f"{frontend_base_url}/{activation_route}?uid={uid}&token={token}"
-        
-        # Send the activation email
-        mail_subject = 'Activate your account'
-        message = render_to_string('acc_activation_email.html', {
+
+        # Render the email message
+        html_message = render_to_string('acc_activation_email.html', {
             'user': user,
-            'domain': get_current_site(request).domain,
-            'activation_url': activation_url,
-            'protocol': request.scheme,
+            'activation_url': activation_url
         })
-        email = EmailMessage(mail_subject, message, to=[user.email])
-        email.send()
+
+        # Create the email message
+        email_message = EmailMultiAlternatives(
+            "Activate Account",
+            "Please use the link below to activate your account.",
+            settings.EMAIL_HOST_USER,
+            [user.email],
+        )
+
+        # Send the email
+        email_message.attach_alternative(html_message, "text/html")
+        email_message.send()
 
         # Return the response
         return Response({
@@ -97,11 +103,16 @@ class VerifyAccountView(viewsets.ViewSet):
             # Check if the token has expired
             if timezone.now() > user.last_login + timedelta(hours=24):
                 return Response({'message': 'Activation link has expired!'}, status=status.HTTP_400_BAD_REQUEST)
+
             user.is_active = True
-            patient = Patient.objects.get(user=user)
-            patient.is_verified = True
-            patient.save()
+
+            if user.role == 'patient':
+                patient = Patient.objects.get(user=user)
+                patient.is_verified = True
+                patient.save()
+
             user.save()
+
             return Response({'message': 'Your account has been activated.'}, status=status.HTTP_200_OK)
         return Response({'message': 'Activation link is invalid!'}, status=status.HTTP_400_BAD_REQUEST)
 
