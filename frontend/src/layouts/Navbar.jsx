@@ -1,21 +1,44 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import MedicationIcon from "@mui/icons-material/Medication";
-import ProfilePictureComponent from "./ProfilePictureComponent.jsx";
-import LogoutIcon from '@mui/icons-material/Logout';
-import authSlice from '../store/slices/auth.js';
+import { styled } from '@mui/material/styles';
+import Badge from '@mui/material/Badge';
+import Avatar from '@mui/material/Avatar';
 
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    backgroundColor: "#44b700",
+    color: "#44b700",
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    "&::after": {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      animation: "ripple 1.2s infinite ease-in-out",
+      border: "1px solid currentColor",
+      content: '""',
+    },
+  },
+  "@keyframes ripple": {
+    "0%": {
+      transform: "scale(.8)",
+      opacity: 1,
+    },
+    "100%": {
+      transform: "scale(2.4)",
+      opacity: 0,
+    },
+  },
+}));
 
 const Navbar = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
-
-  const handleLogout = () => {
-    dispatch(authSlice.actions.logout());
-    navigate("/login");
-  };
+  const isPatient = auth?.account?.role === "patient";
+  const isDoctor = auth?.account?.role === "doctor";
 
   const isAuthenticated = !!auth.account;
 
@@ -36,9 +59,11 @@ const Navbar = () => {
             <li className="md:px-4 md:py-2 text-gray-900">
               <Link to="/">Home</Link>
             </li>
-            <li className="md:px-4 md:py-2 hover:text-gray-700">
-              <a href="#">Doctors</a>
-            </li>
+            {!isDoctor && (
+              <li className="md:px-4 md:py-2 hover:text-gray-700">
+                <a href="#">Doctors</a>
+              </li>
+            )}
             <li className="md:px-4 md:py-2 hover:text-gray-700">
               <a href="#">Blogs</a>
             </li>
@@ -53,16 +78,42 @@ const Navbar = () => {
         <div className="order-2 md:order-3">
           {isAuthenticated ? (
             <div className="flex gap-4">
-              {/* <div className="flex items-center gap-4">
-                <ProfilePictureComponent base64ProfilePicture={user?.profile_picture} />
-              </div> */}
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-gray-900 hover:bg-gray-800 text-gray-50 rounded-xl flex items-center gap-2"
-              >
-                <LogoutIcon />
-                Logout
-              </button>
+              {isPatient && (
+                <>
+                <Link to="/dashboard">
+                  <StyledBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                    variant="dot"
+                  >
+                    <Avatar
+                      alt={auth.account.first_name}
+                      src={`${import.meta.env.VITE_APP_API_BASE_URL}/${
+                        auth.account.profile_picture
+                      }`}
+                    />
+                  </StyledBadge>
+                </Link>
+              </>
+              )}
+              {isDoctor && (
+                <>
+                  <Link to="/dashboard">
+                    <StyledBadge
+                      overlap="circular"
+                      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                      variant="dot"
+                    >
+                      <Avatar
+                        alt={auth.account.first_name}
+                        src={`${import.meta.env.VITE_APP_API_BASE_URL}/${
+                          auth.account.profile_picture
+                        }`}
+                      />
+                    </StyledBadge>
+                  </Link>
+                </>
+              )}
             </div>
           ) : (
             <Link to="/login">

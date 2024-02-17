@@ -196,7 +196,7 @@ function RegistrationForm() {
           Sign up
         </Typography>
         <Link to='/register-doctor' className="mt-2">
-          <Typography component="a" variant="subtitle1" className="hover:underline">
+          <Typography component="span" variant="subtitle1" className="hover:underline">
             Are you a doctor?
           </Typography>
         </Link>

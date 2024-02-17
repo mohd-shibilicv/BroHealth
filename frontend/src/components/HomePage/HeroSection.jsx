@@ -9,7 +9,7 @@ const HeroSection = () => {
 
   return (
     <section className="relative bg-white text-black p-10 mt-10">
-      <div className="hidden absolute md:flex items-center right-10 w-full h-96 lg:w-1/2">
+      <div className="hidden absolute md:flex items-center right-0 w-full h-96 lg:w-1/2">
         <img
           className="object-contain w-full h-full mx-auto rounded-md lg:max-w-2xl"
           src={HeroImage}

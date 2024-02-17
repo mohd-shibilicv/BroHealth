@@ -148,7 +148,7 @@ const ForgotPasswordReset = () => {
             alignItems: "center",
           }}
         >
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h4">
             Reset Password
           </Typography>
           <Box
