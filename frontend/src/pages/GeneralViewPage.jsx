@@ -12,6 +12,10 @@ import ProtectedRoute from "../routes/ProtectedRoute";
 import ActivationPage from "../components/Patients/ActivationPage";
 import ForgotPasswordReset from "../components/Patients/ForgotPasswordReset";
 import Error404Page from "../layouts/Error404Page";
+import Doctors from "./Doctors";
+import Blogs from "./Blogs";
+import About from "./About";
+import Contact from "./Contact";
 
 const GeneralViewPage = () => {
   return (
@@ -20,6 +24,10 @@ const GeneralViewPage = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/doctors" element={<Doctors />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
           <Route
             path="/register"
             element={

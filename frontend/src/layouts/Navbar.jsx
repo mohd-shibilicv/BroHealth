@@ -1,10 +1,22 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import MedicationIcon from "@mui/icons-material/Medication";
-import { styled } from '@mui/material/styles';
-import Badge from '@mui/material/Badge';
-import Avatar from '@mui/material/Avatar';
+import { styled } from "@mui/material/styles";
+import Badge from "@mui/material/Badge";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
+import PersonAdd from "@mui/icons-material/PersonAdd";
+import Settings from "@mui/icons-material/Settings";
+import Logout from "@mui/icons-material/Logout";
+import DashboardPage from "../pages/Patients/Dashboard/DashboardPage";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -37,8 +49,17 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const Navbar = () => {
   const auth = useSelector((state) => state.auth);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+
   const isPatient = auth?.account?.role === "patient";
   const isDoctor = auth?.account?.role === "doctor";
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const isAuthenticated = !!auth.account;
 
@@ -46,32 +67,30 @@ const Navbar = () => {
     <nav className="shadow shadow-gray-300 w-full px-8 md:px-auto">
       <div className="md:h-16 h-28 mx-auto md:px-4 container flex items-center justify-between flex-wrap md:flex-nowrap">
         {/* Logo */}
-        <Link to="/">
+        <NavLink to="/">
           <div className="text-black-600 md:order-1 flex gap-1 items-center">
             <MedicationIcon color="dark" fontSize="large" />
             <p className="font-bold md:text-lg">BroHealth</p>
           </div>
-        </Link>
+        </NavLink>
         <div className="text-gray-500 order-3 w-full md:w-auto md:order-2">
-          <ul className="flex font-semibold justify-between">
-            {/* Active Link = text-gray-600
-               Inactive Link = hover:text-gray-600 */}
-            <li className="md:px-4 md:py-2 text-gray-900">
-              <Link to="/">Home</Link>
+          <ul className="flex font-semibold justify-between" id="header-nav">
+            <li className="md:px-4 md:py-2">
+              <NavLink to="/">Home</NavLink>
             </li>
             {!isDoctor && (
-              <li className="md:px-4 md:py-2 hover:text-gray-700">
-                <a href="#">Doctors</a>
+              <li className="md:px-4 md:py-2">
+                <NavLink to="/doctors">Doctors</NavLink>
               </li>
             )}
-            <li className="md:px-4 md:py-2 hover:text-gray-700">
-              <a href="#">Blogs</a>
+            <li className="md:px-4 md:py-2">
+              <NavLink to="/blogs">Blogs</NavLink>
             </li>
-            <li className="md:px-4 md:py-2 hover:text-gray-700">
-              <a href="#">About</a>
+            <li className="md:px-4 md:py-2">
+              <NavLink to="/about">About</NavLink>
             </li>
-            <li className="md:px-4 md:py-2 hover:text-gray-700">
-              <a href="#">Contact</a>
+            <li className="md:px-4 md:py-2">
+              <NavLink to="/contact">Contact</NavLink>
             </li>
           </ul>
         </div>
@@ -80,10 +99,109 @@ const Navbar = () => {
             <div className="flex gap-4">
               {isPatient && (
                 <>
-                <Link to="/dashboard">
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      textAlign: "center",
+                    }}
+                  >
+                    <Tooltip title="Dashboard">
+                      <IconButton
+                        onClick={handleClick}
+                        size="small"
+                        sx={{ ml: 2 }}
+                        aria-controls={open ? "account-menu" : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? "true" : undefined}
+                      >
+                        <Avatar
+                          alt={auth.account.first_name}
+                          src={`${import.meta.env.VITE_APP_API_BASE_URL}/${
+                            auth.account.profile_picture
+                          }`}
+                        />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                  <Menu
+                    anchorEl={anchorEl}
+                    id="account-menu"
+                    open={open}
+                    onClose={handleClose}
+                    PaperProps={{
+                      elevation: 0,
+                      sx: {
+                        overflow: "visible",
+                        filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                        mt: 1.5,
+                        "& .MuiAvatar-root": {
+                          width: 32,
+                          height: 32,
+                          ml: -0.5,
+                          mr: 1,
+                        },
+                        "&::before": {
+                          content: '""',
+                          display: "block",
+                          position: "absolute",
+                          top: 0,
+                          right: 14,
+                          width: 10,
+                          height: 10,
+                          bgcolor: "background.paper",
+                          transform: "translateY(-50%) rotate(45deg)",
+                          zIndex: 0,
+                        },
+                      },
+                    }}
+                    transformOrigin={{ horizontal: "right", vertical: "top" }}
+                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                  >
+                    <MenuItem>
+                      <Link to="/dashboard" className="flex items-center">
+                        <Avatar /> Dashbaord
+                      </Link>
+                    </MenuItem>
+                    <MenuItem>
+                      <Link
+                        to="/dashboard/profile"
+                        className="flex items-center"
+                      >
+                        <Avatar /> My account
+                      </Link>
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem onClick={handleClose}>
+                      <Link
+                        to="/dashboard/appointments"
+                        className="flex items-center"
+                      >
+                        <ListItemIcon>
+                          <PersonAdd fontSize="small" />
+                        </ListItemIcon>
+                        My Appointments
+                      </Link>
+                    </MenuItem>
+                    <MenuItem onClick={handleClose}>
+                      <Link
+                        to="/dashboard/account"
+                        className="flex items-center"
+                      >
+                        <ListItemIcon>
+                          <Settings fontSize="small" />
+                        </ListItemIcon>
+                        Settings
+                      </Link>
+                    </MenuItem>
+                  </Menu>
+                </>
+              )}
+              {isDoctor && (
+                <>
                   <StyledBadge
                     overlap="circular"
-                    anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                     variant="dot"
                   >
                     <Avatar
@@ -93,30 +211,11 @@ const Navbar = () => {
                       }`}
                     />
                   </StyledBadge>
-                </Link>
-              </>
-              )}
-              {isDoctor && (
-                <>
-                  <Link to="/dashboard">
-                    <StyledBadge
-                      overlap="circular"
-                      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                      variant="dot"
-                    >
-                      <Avatar
-                        alt={auth.account.first_name}
-                        src={`${import.meta.env.VITE_APP_API_BASE_URL}/${
-                          auth.account.profile_picture
-                        }`}
-                      />
-                    </StyledBadge>
-                  </Link>
                 </>
               )}
             </div>
           ) : (
-            <Link to="/login">
+            <NavLink to="/login">
               <button className="px-4 py-2 bg-gray-900 hover:bg-gray-800 text-gray-50 rounded-xl flex items-center gap-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -132,7 +231,7 @@ const Navbar = () => {
                 </svg>
                 <span>Login</span>
               </button>
-            </Link>
+            </NavLink>
           )}
         </div>
       </div>

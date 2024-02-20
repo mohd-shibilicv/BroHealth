@@ -9,15 +9,15 @@ const HeroSection = () => {
 
   return (
     <section className="relative bg-white text-black p-10 mt-10">
-      <div className="hidden absolute md:flex items-center right-0 w-full h-96 lg:w-1/2">
+      <div className="hidden absolute md:flex items-center right-0 top-0 w-full h-full lg:w-1/2">
         <img
-          className="object-contain w-full h-full mx-auto rounded-md lg:max-w-2xl"
+          className="object-contain rounded w-full h-full mx-auto lg:max-w-2xl"
           src={HeroImage}
-          alt="glasses photo"
+          alt="Hero Image"
         />
       </div>
-      <div className="relative lg:w-1/2 lg:pl-20">
-        <div className="text-6xl font-semibold text-gray-900 leading-none">
+      <div className="relative lg:w-1/2 lg:pl-20 flex flex-col">
+        <div className="text-5xl font-semibold text-gray-900 leading-none">
             Your trusted partner for online medical consultations.
         </div>
         <div className="mt-6 text-xl font-light text-true-gray-500 antialiased">
@@ -25,13 +25,13 @@ const HeroSection = () => {
         </div>
         {isAuthenticated ? (
           <Link to="/dashboard">
-          <button className="mt-6 px-8 py-4 font-semibold rounded-full tracking-wide bg-gradient-to-b border from-gray-800 to-gray-900 hover:from-gray-100 hover:to-gray-200 hover:text-black hover:border-black text-white outline-none focus:outline-none hover:shadow-lg transition duration-200 ease-in-out">
+          <button className="mt-6 px-8 py-4 border font-semibold rounded-full bg-gray-900 text-white hover:bg-white hover:text-black hover:border-black">
             Dashboard
           </button>
         </Link>
-        ): (
+        ) : (
           <Link to="/register">
-          <button className="mt-6 px-8 py-4 font-semibold rounded-full tracking-wide bg-gradient-to-b border from-gray-800 to-gray-900 hover:from-gray-100 hover:to-gray-200 hover:text-black hover:border-black text-white outline-none focus:outline-none hover:shadow-lg transition duration-200 ease-in-out">
+          <button className="mt-6 px-8 py-4 border font-semibold rounded-full bg-gray-900 text-white hover:bg-white hover:text-black hover:border-black">
             Register for Free
           </button>
         </Link>
