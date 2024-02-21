@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import Pagination from "@mui/material/Pagination";
-import FilterListIcon from '@mui/icons-material/FilterList';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import FilterListIcon from "@mui/icons-material/FilterList";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 import { NavLink } from "react-router-dom";
 
 const Doctors = () => {
@@ -60,7 +60,7 @@ const Doctors = () => {
         </Button>
 
         {/* Category Navlinks */}
-        <div className="flex justify-center items-center" id="category-filter">
+        {/* <div className="flex justify-center items-center" id="category-filter">
           {categories.map((category, index) => (
             <NavLink
               key={index}
@@ -69,12 +69,28 @@ const Doctors = () => {
               {category}
             </NavLink>
           ))}
-        </div>
+        </div> */}
 
         {/* Sort By Button */}
-        <div onClick={handleSortChange} className="px-2 py-1 rounded-sm mr-4 border bg-white border-black hover:bg-gray-200 text-black">
-          Sort by
-          <KeyboardArrowDownIcon />
+        <div className="flex justify-center items-center">
+          <form
+            method="get"
+            className="sorting-form flex gap-2 items-center"
+          >
+            <div className="relative">
+              <select
+                name="sort"
+                id="sort"
+                onClick={handleSortChange}
+                className="border border-black p-2 rounded-md min-w-[150px]"
+              >
+                <option value="default">Default</option>
+                <option value="specialization">Specialzation</option>
+                <option value="fee">Fee</option>
+                <option value="expertise">Expertise</option>
+              </select>
+            </div>
+          </form>
         </div>
       </div>
 
@@ -113,11 +129,7 @@ const FilterForm = () => {
 const DoctorCard = ({ doctor }) => {
   return (
     <div className="bg-white rounded p-4 shadow-md">
-      <img
-        src="/doctor7.jpg"
-        alt={doctor.name}
-        className="rounded-full mb-2"
-      />
+      <img src="/doctor7.jpg" alt={doctor.name} className="rounded-full mb-2" />
       <h2 className="text-xl font-medium mb-1">sdhgas</h2>
       <p className="text-gray-600">dasda</p>
       <Button
