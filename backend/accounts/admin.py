@@ -21,7 +21,7 @@ class CustomUserAdmin(UserAdmin):
         ('Personal info', {'fields': ('first_name', 'last_name', 'date_of_birth', 'gender', 'address', 'mobile_number', 'profile_picture')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
     )
-    
+
     # Specify the fields to be displayed in the add user form
     add_fieldsets = (
         (None, {

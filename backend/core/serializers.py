@@ -8,6 +8,8 @@ from rest_framework.validators import UniqueValidator
 from django.core.exceptions import ObjectDoesNotExist
 
 from accounts.serializers import UserSerializer
+from patients.serializers import PatientSerializer
+from doctors.serializers import DoctorSerializer
 from accounts.models import User
 from patients.models import Patient
 from doctors.models import Doctor
@@ -20,7 +22,19 @@ class LoginSerializer(TokenObtainPairSerializer):
 
         refresh = self.get_token(self.user)
 
-        data['user'] = UserSerializer(self.user).data
+        # Serialize the user
+        user_data = UserSerializer(self.user).data
+
+        if self.user.role == 'patient':
+            # Serialize the patient
+            patient_data = PatientSerializer(Patient.objects.get(user=self.user)).data
+            data['patient'] = patient_data
+        elif self.user.role == 'doctor':
+            # Serialize the doctor
+            doctor_data = DoctorSerializer(Doctor.objects.get(user=self.user)).data
+            data['doctor'] = doctor_data
+
+        data['user'] = user_data
         data['refresh'] = str(refresh)
         data['access'] = str(refresh.access_token)
 

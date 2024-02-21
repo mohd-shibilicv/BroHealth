@@ -1,4 +1,5 @@
 import os
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from datetime import datetime, timedelta
 from rest_framework import viewsets, generics
@@ -139,3 +140,13 @@ class ResetPassword(generics.GenericAPIView):
             return Response({'success':'Password updated'})
         else: 
             return Response({'error':'No user found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class DeactivateAccountView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = get_object_or_404(User, pk=request.user.pk)
+        user.is_active = False
+        user.save()
+        return Response({"message": "Account deactivated successfully."}, status=status.HTTP_200_OK)

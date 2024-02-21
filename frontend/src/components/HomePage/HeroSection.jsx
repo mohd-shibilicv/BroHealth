@@ -1,11 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import HeroImage from '/heroimage.jpg';
+import HeroImage from "/heroimage.jpg";
 import { useSelector } from "react-redux";
 
 const HeroSection = () => {
   const auth = useSelector((state) => state.auth);
   const isAuthenticated = !!auth.account;
+  const isPatient = auth.account.role === "patient";
+  const isDoctor = auth.account.role === "doctor";
 
   return (
     <section className="relative bg-white text-black p-10 mt-10">
@@ -18,23 +20,33 @@ const HeroSection = () => {
       </div>
       <div className="relative lg:w-1/2 lg:pl-20 flex flex-col">
         <div className="text-5xl font-semibold text-gray-900 leading-none">
-            Your trusted partner for online medical consultations.
+          Your trusted partner for online medical consultations.
         </div>
         <div className="mt-6 text-xl font-light text-true-gray-500 antialiased">
           Our platform is designed to simplify access to quality care.
         </div>
-        {isAuthenticated ? (
-          <Link to="/dashboard">
-          <button className="mt-6 px-8 py-4 border font-semibold rounded-full bg-gray-900 text-white hover:bg-white hover:text-black hover:border-black">
-            Dashboard
-          </button>
-        </Link>
-        ) : (
+
+        {!isAuthenticated && (
           <Link to="/register">
-          <button className="mt-6 px-8 py-4 border font-semibold rounded-full bg-gray-900 text-white hover:bg-white hover:text-black hover:border-black">
-            Register for Free
-          </button>
-        </Link>
+            <button className="mt-6 px-8 py-4 border font-semibold rounded-full bg-gray-900 text-white hover:bg-white hover:text-black hover:border-black">
+              Register for free
+            </button>
+          </Link>
+        )}
+
+        {isPatient && (
+          <Link to="/dashboard">
+            <button className="mt-6 px-8 py-4 border font-semibold rounded-full bg-gray-900 text-white hover:bg-white hover:text-black hover:border-black">
+              Dashboard
+            </button>
+          </Link>
+        )}
+        {isDoctor && (
+          <Link to="/doctor-dashboard">
+            <button className="mt-6 px-8 py-4 border font-semibold rounded-full bg-gray-900 text-white hover:bg-white hover:text-black hover:border-black">
+              Dashboard
+            </button>
+          </Link>
         )}
       </div>
       <div className="mt-12 lg:mt-32 lg:ml-20 text-left">

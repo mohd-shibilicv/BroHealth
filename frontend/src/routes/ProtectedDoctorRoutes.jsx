@@ -1,9 +1,15 @@
-import React from 'react'
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-const ProtectedDoctorRoutes = () => {
-  return (
-    <div>ProtectedDoctorRoutes</div>
-  )
-}
+const ProtectedDoctorRoutes = (props) => {
+  const account = useSelector((state) => state.auth.account);
 
-export default ProtectedDoctorRoutes
+  if (account?.role === 'doctor') {
+    return props.children;
+  } else {
+    return <Navigate to="/login" replace />;
+  }
+};
+
+export default ProtectedDoctorRoutes;

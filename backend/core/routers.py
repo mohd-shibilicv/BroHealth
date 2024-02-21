@@ -1,5 +1,7 @@
 from rest_framework.routers import SimpleRouter
 from accounts.views import UserModelViewSet
+from patients.views import PatientModelViewSet
+from doctors.views import DoctorModelViewSet
 from core.viewsets import LoginViewSet, RegistrationViewSet, RefreshViewSet, VerifyAccountView
 
 
@@ -13,6 +15,11 @@ routes.register(r'auth/refresh', RefreshViewSet, basename='auth-refresh')
 # USER
 routes.register(r'user', UserModelViewSet, basename='user')
 
+# Patient
+routes.register(r'patient', PatientModelViewSet, basename='patient')
+
+# Doctor
+routes.register(r'doctor', DoctorModelViewSet, basename='doctor')
 
 urlpatterns = [
     *routes.urls

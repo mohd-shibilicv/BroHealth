@@ -34,13 +34,8 @@ export default function LoginForm() {
           })
         );
         dispatch(authSlice.actions.setAccount(res.data.user));
-        if (res.data.user.role === 'patient') {
-          dispatch(authSlice.actions.setInfo(res.data.patient));
-        } else if (res.data.user.role === 'doctor') {
-          dispatch(authSlice.actions.setInfo(res.data.doctor));
-        }
         setLoading(false);
-        navigate("/");
+        navigate("/doctor-dashboard");
       })
       .catch((err) => {
         setLoading(false)
@@ -60,8 +55,8 @@ export default function LoginForm() {
             alignItems: "center",
           }}
         >
-          <Typography component="h1" variant="h4">
-            Sign in
+          <Typography component="h1" variant="h5">
+            Admin Login
           </Typography>
           <Box
             component="form"
@@ -123,20 +118,6 @@ export default function LoginForm() {
                 <p>Sign In</p>
               )}
             </Button>
-            <Grid container>
-              <Grid item>
-                <Link
-                  to="/register"
-                  className="hover:underline"
-                  variant="body2"
-                >
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
-            <div className="mt-2 hover:underline">
-              <Link to="/forgot-password">{"Forgot password?"}</Link>
-            </div>
           </Box>
         </Box>
       </Container>

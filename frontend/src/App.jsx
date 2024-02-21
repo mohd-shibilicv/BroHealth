@@ -7,7 +7,12 @@ import "@fontsource/roboto/700.css";
 import { Route, Routes, useLocation } from "react-router-dom";
 import GeneralViewPage from "./pages/GeneralViewPage";
 import PatientDashboardView from "./pages/PatientDashboardView";
-
+import ProtectedPatientRoutes from "./routes/ProtectedPatientRoutes";
+import ProtectedDoctorRoutes from "./routes/ProtectedDoctorRoutes";
+import DoctorDashboardView from "./pages/DoctorDashboardView";
+import ProtectedAdminRoutes from "./routes/ProtectedAdminRoutes";
+import AdminDashboardView from "./pages/AdminDashboardView";
+import LoginForm from "./components/Admin/LoginForm";
 
 function App() {
   const location = useLocation();
@@ -17,7 +22,31 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/*" element={<GeneralViewPage />} />
-          <Route  path="/dashboard/*" element={<PatientDashboardView />} />
+          <Route
+            path="/dashboard/*"
+            element={
+              <ProtectedPatientRoutes>
+                <PatientDashboardView />
+              </ProtectedPatientRoutes>
+            }
+          />
+          <Route
+            path="/doctor-dashboard/*"
+            element={
+              <ProtectedDoctorRoutes>
+                <DoctorDashboardView />
+              </ProtectedDoctorRoutes>
+            }
+          />
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedAdminRoutes>
+                <AdminDashboardView />
+              </ProtectedAdminRoutes>
+            }
+          />
+          <Route path="/admin-login" element={<LoginForm />} />
         </Routes>
       </div>
     </>

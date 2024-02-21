@@ -32,6 +32,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const DashboardProfile = () => {
   const token = useSelector((state) => state.auth.token);
   const account = useSelector((state) => state.auth.account);
+  const info = useSelector((state) => state.auth.info);
   const user = useSelector((state) => state.auth.user);
   const [open, setOpen] = useState(false);
   const [openUpdateForm, setopenUpdateForm] = useState(false);
@@ -42,18 +43,21 @@ const DashboardProfile = () => {
   const [gender, setGender] = useState(account.gender);
   const [address, setAddress] = useState(account.address);
   const [mobileNumber, setMobileNumber] = useState(account.mobile_number);
-  const [medicalHistory, setMedicalHistory] = useState(account.medical_history);
-  const [prescription, setPrescription] = useState(account.prescription);
-  const [preferredTimezone, setPreferredTimezone] = useState(
-    account.preferred_timezone
+  const [specialization, setSpecialization] = useState(info.specialization);
+  const [years_of_experience, setYearsOfExperience] = useState(info.years_of_experience);
+  const [education, setEducation] = useState(
+    info.education
   );
-  const [preferredLanguage, setPreferredLanguage] = useState(
-    account.preferred_language
+  const [clinic_address, setClinicAddress] = useState(
+    info.clinic_address
   );
-  const [emergencyContact, setEmergencyContact] = useState(
-    account.emergency_contact
+  const [clinic_phone_number, setClinicPhoneNumber] = useState(
+    info.clinic_phone_number
   );
-  const [isVerified, setIsVerified] = useState(account.is_verified);
+  const [clinic_website, setClinicWebsite] = useState(
+    info.clinic_website
+  );
+  const [isApproved, setIsApproved] = useState(info.is_approved);
   const [profilePicture, setProfilePicture] = useState(
     account.profile_picture
   );
@@ -140,11 +144,11 @@ const DashboardProfile = () => {
 
     const data = {
       user: user,
-      medical_history: medicalHistory,
-      prescription: prescription,
-      preferred_timezone: preferredTimezone,
-      preferred_language: preferredLanguage,
-      emergency_contact: emergencyContact,
+      spacialization: specialization,
+      years_of_experience: years_of_experience,
+      preferred_timezone: education,
+      preferred_language: clinic_address,
+      emergency_contact: clinic_phone_number,
       is_verified: isVerified,
     };
     try {
@@ -237,23 +241,26 @@ const DashboardProfile = () => {
               <h2 className="text-xl font-semibold">Additional Info</h2>
               <div>
                 <p>
-                  medical_history: <span>{account?.medical_history}</span>
+                  spacialization: <span>{info?.specialization}</span>
                 </p>
                 <p>
-                  prescription: <span>{account?.prescription}</span>
+                  years_of_experience: <span>{info?.years_of_experience}</span>
                 </p>
                 <p>
-                  preferred_timezone: <span>{account?.preferred_timezone}</span>
+                  education: <span>{info?.education}</span>
                 </p>
                 <p>
-                  preferred_language: <span>{account?.preferred_language}</span>
+                  clinic_address: <span>{info?.clinic_address}</span>
                 </p>
                 <p>
-                  emergency_contact: <span>{account?.emergency_contact}</span>
+                  clinic_phone_number: <span>{info?.clinic_phone_number}</span>
                 </p>
                 <p>
-                  is_verified:{" "}
-                  <span>{account?.is_verified ? "True" : "False"}</span>
+                  clinic_website: <span>{info?.clinic_website}</span>
+                </p>
+                <p>
+                  is_approved:{" "}
+                  <span>{info?.is_approved ? "True" : "False"}</span>
                 </p>
               </div>
             </div>
