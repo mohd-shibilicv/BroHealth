@@ -38,6 +38,8 @@ export default function LoginForm() {
           dispatch(authSlice.actions.setInfo(res.data.patient));
         } else if (res.data.user.role === 'doctor') {
           dispatch(authSlice.actions.setInfo(res.data.doctor));
+        } else if (res.data.user.role === 'admin') {
+          dispatch(authSlice.actions.setInfo(res.data.admin));
         }
         setLoading(false);
         navigate("/");

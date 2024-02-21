@@ -40,24 +40,10 @@ const DashboardProfile = () => {
   const [firstName, setFirstName] = useState(account.first_name);
   const [lastName, setLastName] = useState(account.last_name);
   const [dateOfBirth, setDateOfBirth] = useState(account.date_of_birth);
-  const [gender, setGender] = useState(account.gender);
+  const [gender, setGender] = useState("");
   const [address, setAddress] = useState(account.address);
   const [mobileNumber, setMobileNumber] = useState(account.mobile_number);
-  const [specialization, setSpecialization] = useState(info.specialization);
-  const [years_of_experience, setYearsOfExperience] = useState(info.years_of_experience);
-  const [education, setEducation] = useState(
-    info.education
-  );
-  const [clinic_address, setClinicAddress] = useState(
-    info.clinic_address
-  );
-  const [clinic_phone_number, setClinicPhoneNumber] = useState(
-    info.clinic_phone_number
-  );
-  const [clinic_website, setClinicWebsite] = useState(
-    info.clinic_website
-  );
-  const [isApproved, setIsApproved] = useState(info.is_approved);
+  const [isVerified, setIsVerified] = useState(info?.is_verified);
   const [profilePicture, setProfilePicture] = useState(
     account.profile_picture
   );
@@ -241,26 +227,8 @@ const DashboardProfile = () => {
               <h2 className="text-xl font-semibold">Additional Info</h2>
               <div>
                 <p>
-                  spacialization: <span>{info?.specialization}</span>
-                </p>
-                <p>
-                  years_of_experience: <span>{info?.years_of_experience}</span>
-                </p>
-                <p>
-                  education: <span>{info?.education}</span>
-                </p>
-                <p>
-                  clinic_address: <span>{info?.clinic_address}</span>
-                </p>
-                <p>
-                  clinic_phone_number: <span>{info?.clinic_phone_number}</span>
-                </p>
-                <p>
-                  clinic_website: <span>{info?.clinic_website}</span>
-                </p>
-                <p>
-                  is_approved:{" "}
-                  <span>{info?.is_approved ? "True" : "False"}</span>
+                  is_verified:{" "}
+                  <span>{info?.is_verified ? "True" : "False"}</span>
                 </p>
               </div>
             </div>
@@ -365,10 +333,6 @@ const DashboardProfile = () => {
                   views={["year", "month", "day"]}
                   className="w-full mt-2"
                   disableFuture
-                  value={dateOfBirth}
-                  onChange={(newValue) => {
-                    setDateOfBirth(newValue);
-                  }}
                   sx={{ mb: 2 }}
                 />
               </LocalizationProvider>

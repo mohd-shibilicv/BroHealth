@@ -12,8 +12,6 @@ class DoctorSerializer(serializers.ModelSerializer):
     """
     A Serializer for the Doctor Model, That uses a nested UserSerializer.
     """
-    user = UserSerializer()
-
     class Meta:
         model = Doctor
         fields = (
@@ -30,19 +28,6 @@ class DoctorSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user_data = validated_data.pop('user', None)
-        if user_data is not None:
-            user = instance.user
-
-            user.email = user_data.get('email', user.email)
-            user.first_name = user_data.get('first_name', user.first_name)
-            user.last_name = user_data.get('last_name', user.last_name)
-            user.date_of_birth = user_data.get('date_of_birth', user.date_of_birth)
-            user.gender = user_data.get('gender', user.gender)
-            user.address = user_data.get('address', user.address)
-            user.mobile_number = user_data.get('mobile_number', user.mobile_number)
-            user.profile_picture = user_data.get('profile_picture', user.profile_picture)
-
-            user.save()
 
         instance.specialization = validated_data.get('specialization', instance.specialization)
         instance.years_of_experience = validated_data.get('years_of_experience', instance.years_of_experience)

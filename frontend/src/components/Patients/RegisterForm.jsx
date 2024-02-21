@@ -52,6 +52,11 @@ function RegistrationForm() {
           errorMessage = "Password must be at least 8 characters long";
         }
         break;
+      case "confirm-password":
+        if (value !== password) {
+          errorMessage = "Passwords do not match";
+        }
+        break;
       default:
         break;
     }
@@ -100,10 +105,10 @@ function RegistrationForm() {
 
     // Validate the form fields manually
     const validationErrors = {};
-    if (!firstname || !/^[a-zA-Z\s'-]+$/.test(firstname)) {
+    if (!firstname.trim() || !/^[a-zA-Z\s'-]+$/.test(firstname)) {
       validationErrors.firstname = "Please enter a valid firstname";
     }
-    if (!lastname || !/^[a-zA-Z\s'-]+$/.test(lastname)) {
+    if (!lastname.trim() || !/^[a-zA-Z\s'-]+$/.test(lastname)) {
       validationErrors.lastname = "Please enter a valid firstname";
     }
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
@@ -195,8 +200,12 @@ function RegistrationForm() {
         <Typography component="h1" variant="h4">
           Sign up
         </Typography>
-        <Link to='/register-doctor' className="mt-2">
-          <Typography component="span" variant="subtitle1" className="hover:underline">
+        <Link to="/register-doctor" className="mt-2">
+          <Typography
+            component="span"
+            variant="subtitle1"
+            className="hover:underline"
+          >
             Are you a doctor?
           </Typography>
         </Link>
@@ -207,7 +216,7 @@ function RegistrationForm() {
         >
           <Grid container spacing={2} className="m-2 important">
             <Grid item xs={12} sm={6}>
-              {errors.non_field_errors  && (
+              {errors.non_field_errors && (
                 <p className="mx-auto flex justify-center bg-red-100 text-red-600 px-5 py-3 rounded">
                   {errors.non_field_errors.join(", ")}
                 </p>

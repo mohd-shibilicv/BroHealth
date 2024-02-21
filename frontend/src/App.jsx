@@ -12,7 +12,6 @@ import ProtectedDoctorRoutes from "./routes/ProtectedDoctorRoutes";
 import DoctorDashboardView from "./pages/DoctorDashboardView";
 import ProtectedAdminRoutes from "./routes/ProtectedAdminRoutes";
 import AdminDashboardView from "./pages/AdminDashboardView";
-import LoginForm from "./components/Admin/LoginForm";
 
 function App() {
   const location = useLocation();
@@ -46,7 +45,6 @@ function App() {
               </ProtectedAdminRoutes>
             }
           />
-          <Route path="/admin-login" element={<LoginForm />} />
         </Routes>
       </div>
     </>

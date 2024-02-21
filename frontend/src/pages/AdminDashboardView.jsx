@@ -9,6 +9,9 @@ import Payments from './Admin/Dashboard/Payments'
 import Notifications from './Admin/Dashboard/Notifications'
 import DashboardProfile from './Admin/Dashboard/DashboardProfile'
 import Account from './Admin/Dashboard/Account'
+import Patients from './Admin/Dashboard/Patients'
+import ChatSection from './Admin/Dashboard/ChatSection'
+import AccountVerifications from './Admin/Dashboard/AccountVerifications'
 
 
 const AdminDashboardView = () => {
@@ -21,7 +24,9 @@ const AdminDashboardView = () => {
                 <Route path="/patients" element={<Patients />} />
                 <Route path="/doctors" element={<Doctors />} />
                 <Route path="/payments" element={<Payments />} />
+                <Route path="/chat" element={<ChatSection />} />
                 <Route path="/notifications" element={<Notifications />} />
+                <Route path="/verifications" element={<AccountVerifications />} />
                 <Route path="/profile" element={<DashboardProfile />} />
                 <Route path="/account" element={<Account />} />
                 <Route path="*" element={<Error404Page />} />

@@ -10,9 +10,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from accounts.serializers import UserSerializer
 from patients.serializers import PatientSerializer
 from doctors.serializers import DoctorSerializer
+from admins.serializers import AdminSerializer
 from accounts.models import User
 from patients.models import Patient
 from doctors.models import Doctor
+from admins.models import Admin
 
 
 class LoginSerializer(TokenObtainPairSerializer):
@@ -33,6 +35,10 @@ class LoginSerializer(TokenObtainPairSerializer):
             # Serialize the doctor
             doctor_data = DoctorSerializer(Doctor.objects.get(user=self.user)).data
             data['doctor'] = doctor_data
+        elif self.user.role == 'admin':
+            # Serialize the admin
+            admin_data = AdminSerializer(Admin.objects.get(user=self.user)).data
+            data['admin'] = admin_data
 
         data['user'] = user_data
         data['refresh'] = str(refresh)

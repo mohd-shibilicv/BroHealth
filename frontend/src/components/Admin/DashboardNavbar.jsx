@@ -25,6 +25,7 @@ import MedicationIcon from "@mui/icons-material/Medication";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import FormatListNumberedRtlIcon from "@mui/icons-material/FormatListNumberedRtl";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import VerifiedIcon from '@mui/icons-material/Verified';
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -202,8 +203,8 @@ export default function DashboardNavbar({ content }) {
                 px: 2.5,
               }}
               component={Link}
-              to="/doctor-dashboard"
-              selected={"/doctor-dashboard" === path}
+              to="/admin"
+              selected={"/admin" === path}
             >
               <Tooltip title="Dashboard" placement="right-end">
                 <ListItemIcon
@@ -390,6 +391,35 @@ export default function DashboardNavbar({ content }) {
               </Tooltip>
               <ListItemText
                 primary="Notifications"
+                sx={{ opacity: open ? 1 : 0 }}
+              />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? "initial" : "center",
+                px: 2.5,
+              }}
+              component={Link}
+              to="/admin/verifications"
+              selected={"/admin/verifications" === path}
+            >
+              <Tooltip title="Account Verification" placement="right-end">
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                    color: "black",
+                  }}
+                >
+                  <VerifiedIcon />
+                </ListItemIcon>
+              </Tooltip>
+              <ListItemText
+                primary="Account Verification"
                 sx={{ opacity: open ? 1 : 0 }}
               />
             </ListItemButton>

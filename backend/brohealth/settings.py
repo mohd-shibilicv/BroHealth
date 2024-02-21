@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'patients.apps.PatientsConfig',
     'doctors.apps.DoctorsConfig',
+    'admins.apps.AdminsConfig',
 ]
 
 REST_FRAMEWORK = {
