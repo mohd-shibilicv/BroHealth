@@ -77,7 +77,8 @@ const ForgotPassword = () => {
             component="form"
             onSubmit={handleSubmit}
             noValidate
-            sx={{ mt: 5, width: 500 }}
+            sx={{ mt: 5, }}
+            className="md:w-[500px]"
           >
             {error && (
               <p className="mx-auto flex justify-center bg-red-100 text-red-600 px-5 py-3 rounded">

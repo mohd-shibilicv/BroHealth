@@ -155,7 +155,8 @@ const ForgotPasswordReset = () => {
             component="form"
             onSubmit={handleSubmit}
             noValidate
-            sx={{ mt: 2, width: 500 }}
+            sx={{ mt: 2, }}
+            className="md:w-[500px]"
           >
             {errors.non_field_errors && (
               <p className="mx-auto flex justify-center bg-red-100 text-red-600 px-5 py-3 rounded">

@@ -203,7 +203,8 @@ function RegistrationForm() {
         <Box
           component="form"
           onSubmit={handleSubmit}
-          sx={{ mt: 3, width: 500 }}
+          sx={{ mt: 3, }}
+          className="md:w-[500px]"
         >
           <Grid container spacing={2} className="m-2 important">
             <Grid item xs={12} sm={6}>

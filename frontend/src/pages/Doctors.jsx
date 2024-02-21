@@ -81,7 +81,7 @@ const Doctors = () => {
               <select
                 name="sort"
                 id="sort"
-                onClick={handleSortChange}
+                onChange={handleSortChange}
                 className="border border-black p-2 rounded-md min-w-[150px]"
               >
                 <option value="default">Default</option>
