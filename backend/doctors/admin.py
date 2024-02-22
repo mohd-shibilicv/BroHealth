@@ -15,4 +15,4 @@ class DoctorAdmin(admin.ModelAdmin):
 
 @admin.register(DoctorVerification)
 class DoctorVerificationAdmin(admin.ModelAdmin):
-    list_display = ('doctor__name', 'license_number', 'licensure_information', 'verification_status')
+    list_display = ('doctor', 'license_number', 'licensure_information', 'verification_status')

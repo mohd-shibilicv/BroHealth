@@ -47,10 +47,6 @@ class DoctorVerificationSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        print(self.context['request'].data)
-        print('########')
-        print(validated_data)
-        print('########')
         doctor_verification = DoctorVerification.objects.create(**validated_data)
 
         index =  0
