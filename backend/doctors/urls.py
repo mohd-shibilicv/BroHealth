@@ -1,11 +1,12 @@
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import DoctorVerificationViewSet
 
-from doctors import views
-from accounts.views import LogoutView
-
+router = DefaultRouter()
+router.register(r'account-verification', DoctorVerificationViewSet)
 
 app_name = 'doctors'
 
 urlpatterns = [
-    path('logout/', LogoutView.as_view(), name='logout'),
+    path('', include(router.urls)),
 ]

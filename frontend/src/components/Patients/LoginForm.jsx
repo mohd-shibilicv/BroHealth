@@ -27,13 +27,13 @@ export default function LoginForm() {
     axios
       .post(`${import.meta.env.VITE_APP_API_URL}/auth/login/`, { email, password })
       .then((res) => {
+        dispatch(authSlice.actions.setAccount(res.data.user));
         dispatch(
           authSlice.actions.setAuthTokens({
             token: res.data.access,
             refreshToken: res.data.refresh,
           })
         );
-        dispatch(authSlice.actions.setAccount(res.data.user));
         if (res.data.user.role === 'patient') {
           dispatch(authSlice.actions.setInfo(res.data.patient));
         } else if (res.data.user.role === 'doctor') {

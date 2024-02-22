@@ -3,10 +3,12 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth import login
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.views import APIView
 
 from accounts.permissions import IsDoctor
-from doctors.models import Doctor
-from doctors.serializers import DoctorSerializer
+from doctors.models import Doctor, DoctorVerification
+from doctors.serializers import DoctorSerializer, DoctorVerificationSerializer
 
 
 class DoctorModelViewSet(viewsets.ModelViewSet):
@@ -26,3 +28,10 @@ class DoctorModelViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
+
+
+class DoctorVerificationViewSet(viewsets.ModelViewSet):
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = [IsAuthenticated]
+    queryset = DoctorVerification.objects.all()
+    serializer_class = DoctorVerificationSerializer

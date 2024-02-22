@@ -18,3 +18,31 @@ class Doctor(models.Model):
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
+
+
+class Certificate(models.Model):
+    file = models.FileField(upload_to='certificates/')
+
+    def __str__(self):
+        return f'{self.file.name}'
+
+
+class VerificationStatusChoices(models.TextChoices):
+    PENDING = 'pending', 'Pending'
+    APPROVED = 'approved', 'Approved'
+    REJECTED = 'rejected', 'Rejected'
+
+
+class DoctorVerification(models.Model):
+    doctor = models.OneToOneField(Doctor, related_name='verification', on_delete=models.CASCADE)
+    license_number = models.CharField(max_length=100, unique=True)
+    licensure_information = models.TextField()
+    verification_status = models.CharField(
+        max_length=20,
+        choices=VerificationStatusChoices.choices,
+        default=VerificationStatusChoices.PENDING,
+    )
+    certificates = models.ManyToManyField(Certificate)
+
+    def __str__(self):
+        return f'{self.license_number}'

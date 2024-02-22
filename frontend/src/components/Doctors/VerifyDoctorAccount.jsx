@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState } from "react";
 import Slide from "@mui/material/Slide";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -5,7 +6,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import MenuItem from "@mui/material/MenuItem";
 import { Grid, Avatar } from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Button from "@mui/material/Button";
@@ -14,28 +14,85 @@ import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import DropzoneComponent from "../FormComponents/DropZoneComponent";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const VerifyDoctorAccount = () => {
+  const token = useSelector((state) => state.auth.token)
+  const userId = useSelector((state) => state.auth.info.id)
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const [licenseNumber, setLicenseNumber] = useState("");
+  const [licensureInformation, setLicensureInformation] = useState("");
+  const [uploadedFiles, setUploadedFiles] = useState([]);
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
+  const handleFilesChange = (files) => {
+    setUploadedFiles(files);
   };
 
-  const handleSubmit = (e) => {
+  const handleInputChange = (e) => {
+    if (e.target.name === "license-number") {
+      setLicenseNumber(e.target.value);
+    } else if (e.target.name === "licesure-information") {
+      setLicensureInformation(e.target.value);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(e);
+    setLoading(true)
+
+    const formData = new FormData();
+    formData.append("doctor", userId)
+    formData.append("license_number", licenseNumber);
+    formData.append("licensure_information", licensureInformation);
+
+    // Append each file in the uploadedFiles array
+    uploadedFiles.forEach((certificate, index) => {
+      formData.append(`certificates[${index}]`, certificate);
+    });
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/doctors/account-verification/`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(response.data);
+      setLoading(false)
+      toast.success("Verification request sent!", {
+        style: {
+          background: "#000",
+          color: "#fff",
+        },
+        position: "bottom-right",
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } catch (error) {
+      console.error(error.response);
+      setLoading(false)
+      setError(error.response?.data.detail ? error.response?.data.detail.toString() : error.response?.data.doctor[0])
+      toast.error(error.message, {
+        style: {
+          background: "#000",
+          color: "#fff",
+        },
+        position: "bottom-right",
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
   };
 
   return (
     <>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        <ToastContainer />
         <Box
           sx={{
             marginTop: 4,
@@ -51,10 +108,11 @@ const VerifyDoctorAccount = () => {
             component="form"
             onSubmit={handleSubmit}
             noValidate
-            sx={{ mt: 1, width: 500 }}
+            sx={{ mt: 1 }}
+            className="md:w-[500px]"
           >
             {error && (
-              <p className="mx-auto flex justify-center bg-red-100 text-red-600 px-5 py-3 rounded">
+              <p className="mx-auto flex justify-center bg-red-100 text-red-600 px-5 py-3 my-2 rounded">
                 {error}
               </p>
             )}
@@ -67,38 +125,22 @@ const VerifyDoctorAccount = () => {
               type="text"
               fullWidth
               variant="outlined"
+              onChange={handleInputChange}
             />
             <TextField
               margin="dense"
               id="licesure-information"
               name="licesure-information"
               label="Licensure Information"
-              type="test"
+              type="text"
               multiline
               rows={4}
               fullWidth
               variant="outlined"
+              onChange={handleInputChange}
             />
             <Grid item xs={12}>
-              <input
-                style={{ display: "none" }}
-                id="raised-button-file"
-                type="file"
-                multiple
-                onChange={handleFileUpload}
-              />
-              <label htmlFor="raised-button-file">
-                <Button
-                  color="inherit"
-                  className="w-full border"
-                  variant="outlined"
-                  component="span"
-                  sx={{ mt: 2, mb: 2 }}
-                  startIcon={<CloudUploadIcon />}
-                >
-                  Upload Certificates
-                </Button>
-              </label>
+              <DropzoneComponent onFilesChange={handleFilesChange} />
             </Grid>
             <Button
               type="submit"

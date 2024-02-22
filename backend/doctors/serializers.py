@@ -4,7 +4,7 @@ from django.core.validators import MinLengthValidator, RegexValidator
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import authenticate
 
-from doctors.models import Doctor
+from doctors.models import Doctor, Certificate, DoctorVerification
 from accounts.serializers import UserSerializer
 
 
@@ -26,21 +26,49 @@ class DoctorSerializer(serializers.ModelSerializer):
             'is_approved',
         )
 
-    def update(self, instance, validated_data):
-        user_data = validated_data.pop('user', None)
 
-        instance.specialization = validated_data.get('specialization', instance.specialization)
-        instance.years_of_experience = validated_data.get('years_of_experience', instance.years_of_experience)
-        instance.education = validated_data.get('education', instance.education)
-        instance.clinic_address = validated_data.get('clinic_address', instance.clinic_address)
-        instance.clinic_phone_number = validated_data.get('clinic_phone_number', instance.clinic_phone_number)
-        instance.clinic_website = validated_data.get('clinic_website', instance.clinic_website)
-        instance.is_approved = validated_data.get('is_approved', instance.is_approved)
+class CertificateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Certificate
+        fields = '__all__'
 
-        instance.save()
 
-        return instance
-    
-    def perform_update(self, serializer):
-        serializer.save(user=self.request.user)
+class DoctorVerificationSerializer(serializers.ModelSerializer):
+    certificates = CertificateSerializer(many=True, read_only=True)
 
+    class Meta:
+        model = DoctorVerification
+        fields = [
+            'doctor',
+            'license_number',
+            'licensure_information',
+            'verification_status',
+            'certificates',
+        ]
+
+    def create(self, validated_data):
+        print(self.context['request'].data)
+        print('########')
+        print(validated_data)
+        print('########')
+        doctor_verification = DoctorVerification.objects.create(**validated_data)
+
+        index =  0
+        certificates_data = []
+        while True:
+            key = f'certificates[{index}]'
+            if key in self.context['request'].FILES:
+                certificates_data.append(self.context['request'].FILES[key])
+                index +=  1
+            else:
+                break
+
+        # Create Certificate instances and add them to the doctor_verification instance
+        for certificate_data in certificates_data:
+            certificate = Certificate.objects.create(file=certificate_data)
+            doctor_verification.certificates.add(certificate)
+
+        # Save the doctor_verification instance to update the ManyToManyField
+        doctor_verification.save()
+
+        return doctor_verification
