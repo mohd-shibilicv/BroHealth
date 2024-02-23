@@ -13,6 +13,7 @@ const VerificationDetails = () => {
   const { verificationId } = useParams();
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,6 +40,7 @@ const VerificationDetails = () => {
 
   const approveVerification = async () => {
     try {
+      setLoading(true);
       const response = await axios.post(
         `${
           import.meta.env.VITE_APP_API_BASE_URL
@@ -51,6 +53,7 @@ const VerificationDetails = () => {
         }
       );
       if (response.status === 200) {
+        setLoading(false);
         toast.success("Doctor Verification Approved!", {
           style: {
             background: "#000",
@@ -65,7 +68,50 @@ const VerificationDetails = () => {
         }, 3000);
       }
     } catch (error) {
+      setLoading(false);
       console.error("Failed to approve verification:", error);
+      toast.error(`${error.message}`, {
+        style: {
+          background: "#000",
+          color: "#fff",
+        },
+        position: "bottom-right",
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
+
+  const rejectVerification = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `${
+          import.meta.env.VITE_APP_API_BASE_URL
+        }/admins/doctor-account-verification/${verificationId}/reject/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        toast.success("Doctor Verification Rejected!", {
+          style: {
+            background: "#000",
+            color: "#fff",
+          },
+          position: "bottom-right",
+          pauseOnHover: true,
+          draggable: true,
+        });
+        setLoading(false);
+        navigate("/admin/verifications");
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error("Failed to reject verification:", error);
       toast.error(`${error.message}`, {
         style: {
           background: "#000",
@@ -94,11 +140,22 @@ const VerificationDetails = () => {
   }
 
   if (error) {
-    return <Typography variant="h6">{error}</Typography>;
+    return;
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "500px",
+      }}
+    >
+      <Typography variant="h6">{error}</Typography>
+    </Box>;
   }
 
   return (
     <Container>
+      <ToastContainer />
       <Box>
         <Typography
           variant="h5"
@@ -164,12 +221,47 @@ const VerificationDetails = () => {
           </div>
         </div>
         <div className="mx-auto flex gap-3 justify-center items-center w-[500px]">
-          <Button onClick={approveVerification} variant="outlined" color="success" fullWidth>
-            Approve
-          </Button>
-          <Button fullWidth variant="outlined" color="error">
-            Reject
-          </Button>
+          {data.verification_status === "pending" && (
+            <>
+              <Button
+                onClick={approveVerification}
+                variant="outlined"
+                color="success"
+                fullWidth
+              >
+                {loading ? (
+                  <>
+                    <div
+                      className="animate-spin inline-block w-6 h-6 border-[3px] border-current border-t-transparent text-yellow-1000 rounded-full"
+                      role="status"
+                      aria-label="loading"
+                    >
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  </>
+                ) : (
+                  <>Approve</>
+                )}
+              </Button>
+              {!loading && (
+                <Button fullWidth variant="outlined" color="error" onClick={rejectVerification}>
+                  {loading ? (
+                    <>
+                      <div
+                        className="animate-spin inline-block w-6 h-6 border-[3px] border-current border-t-transparent text-yellow-1000 rounded-full"
+                        role="status"
+                        aria-label="loading"
+                      >
+                        <span className="sr-only">Loading...</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>Reject</>
+                  )}
+                </Button>
+              )}
+            </>
+          )}
         </div>
       </Box>
     </Container>

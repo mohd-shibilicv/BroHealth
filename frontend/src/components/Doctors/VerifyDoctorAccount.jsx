@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import DropzoneComponent from "../FormComponents/DropZoneComponent";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from 'react-router-dom';
 
 const VerifyDoctorAccount = () => {
   const token = useSelector((state) => state.auth.token)
@@ -27,6 +28,7 @@ const VerifyDoctorAccount = () => {
   const [licenseNumber, setLicenseNumber] = useState("");
   const [licensureInformation, setLicensureInformation] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const navigate = useNavigate();
 
   const handleFilesChange = (files) => {
     setUploadedFiles(files);
@@ -71,9 +73,9 @@ const VerifyDoctorAccount = () => {
         pauseOnHover: true,
         draggable: true,
       });
-      setLicenseNumber("");
-      setLicensureInformation("");
-      setUploadedFiles([]);
+      setTimeout(() => {
+        navigate('/doctor-dashboard')
+      }, 3000);
     } catch (error) {
       console.error(error.response);
       setLoading(false)

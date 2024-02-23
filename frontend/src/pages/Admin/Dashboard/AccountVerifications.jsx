@@ -9,11 +9,16 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Link } from 'react-router-dom';
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { Tooltip } from "@mui/material";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const columns = [
   { id: "verification_id", label: "ID", minWidth: 100 },
@@ -62,7 +67,35 @@ export default function AccountVerifications() {
     };
 
     fetchData();
-  }, []);
+  }, [setData]);
+
+  const deleteVerificationRecord = async (verificationId) => {
+    try {
+      const response = await axios.post(
+        `${
+          import.meta.env.VITE_APP_API_BASE_URL
+        }/admins/doctor-account-verification/${verificationId}/delete/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      toast.success("Record deleted!", {
+        style: {
+          background: "#000",
+          color: "#fff",
+        },
+        position: "bottom-right",
+        autoClose: 1000,
+        hideProgressBar: true,
+      });
+      setData(data.filter((item) => item.id !== verificationId));
+    } catch (error) {
+      console.error("Failed to delete verification:", error);
+    }
+  };
 
   const rows = data.map((item, index) =>
     createData(
@@ -114,6 +147,7 @@ export default function AccountVerifications() {
         </>
       ) : (
         <Paper sx={{ width: "100%", overflow: "hidden" }}>
+          <ToastContainer />
           <TableContainer sx={{ maxHeight: 540 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
@@ -130,36 +164,83 @@ export default function AccountVerifications() {
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={index}
+              {rows.length === 0 ? (
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          padding: 2,
+                        }}
                       >
-                        {columns.map((column) => {
-                          const value = row[column.id];
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              {column.format && typeof value === "number"
-                                ? column.format(value)
-                                : value}
-                            </TableCell>
-                          );
-                        })}
-                        <TableCell align="center">
-                          <Link to={`detail/${row.verification_id}`}>
-                            <VisibilityIcon className="cursor-pointer hover:text-blue-900" />
-                          </Link>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
+                        <Typography variant="h6" color="black">
+                          No verification requests found.
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              ) : (
+                <TableBody>
+                  {rows
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, index) => {
+                      return (
+                        <TableRow
+                          hover
+                          role="checkbox"
+                          tabIndex={-1}
+                          key={index}
+                        >
+                          {columns.map((column) => {
+                            return (
+                              <TableCell key={column.id} align={column.align}>
+                                {column.id === "verification_status" ? (
+                                  row[column.id] === "approved" ? (
+                                    <p className="p-2 border-green-700 border rounded-lg text-green-700">
+                                      Approved
+                                    </p>
+                                  ) : row[column.id] === "rejected" ? (
+                                    <p className="p-2 border-red-700 border rounded-lg text-red-700">
+                                      Rejected
+                                    </p>
+                                  ) : (
+                                    <p className="p-2 border-yellow-700 border rounded-lg text-yellow-700">
+                                      Pending
+                                    </p>
+                                  )
+                                ) : (
+                                  row[column.id]
+                                )}
+                              </TableCell>
+                            );
+                          })}
+                          <TableCell align="center" xs={{ display: "flex" }}>
+                            <div className="flex gap-3">
+                              <Link to={`detail/${row.verification_id}`}>
+                                <Tooltip title="view" placement="top">
+                                  <VisibilityIcon className="cursor-pointer hover:text-blue-600" />
+                                </Tooltip>
+                              </Link>
+                              <Tooltip title="delete" placement="top">
+                                <DeleteIcon
+                                  className="hover:text-red-600 cursor-pointer"
+                                  onClick={() =>
+                                    deleteVerificationRecord(
+                                      row.verification_id
+                                    )
+                                  }
+                                />
+                              </Tooltip>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              )}
             </Table>
           </TableContainer>
           <TablePagination

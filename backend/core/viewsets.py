@@ -66,7 +66,7 @@ class RegistrationViewSet(ModelViewSet):
         # Render the email message
         html_message = render_to_string('acc_activation_email.html', {
             'user': user,
-            'activation_url': activation_url
+            'activation_url': activation_url,
         })
 
         # Create the email message
