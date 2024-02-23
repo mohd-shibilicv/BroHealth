@@ -39,6 +39,7 @@ class DoctorVerificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = DoctorVerification
         fields = [
+            'id',
             'doctor',
             'license_number',
             'licensure_information',

@@ -12,6 +12,7 @@ import Account from './Admin/Dashboard/Account'
 import Patients from './Admin/Dashboard/Patients'
 import ChatSection from './Admin/Dashboard/ChatSection'
 import AccountVerifications from './Admin/Dashboard/AccountVerifications'
+import VerificationDetails from './Admin/Dashboard/VerificationDetails'
 
 
 const AdminDashboardView = () => {
@@ -27,6 +28,7 @@ const AdminDashboardView = () => {
                 <Route path="/chat" element={<ChatSection />} />
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/verifications" element={<AccountVerifications />} />
+                <Route path="/verifications/detail/:verificationId" element={<VerificationDetails />} />
                 <Route path="/profile" element={<DashboardProfile />} />
                 <Route path="/account" element={<Account />} />
                 <Route path="*" element={<Error404Page />} />

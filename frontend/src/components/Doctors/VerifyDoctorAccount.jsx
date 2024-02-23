@@ -61,7 +61,6 @@ const VerifyDoctorAccount = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log(response.data);
       setLoading(false)
       toast.success("Verification request sent!", {
         style: {
@@ -72,6 +71,9 @@ const VerifyDoctorAccount = () => {
         pauseOnHover: true,
         draggable: true,
       });
+      setLicenseNumber("");
+      setLicensureInformation("");
+      setUploadedFiles([]);
     } catch (error) {
       console.error(error.response);
       setLoading(false)

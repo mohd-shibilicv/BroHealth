@@ -19,7 +19,7 @@ const HeroSection = () => {
   const isPatient = auth.account?.role === "patient";
   const isDoctor = auth.account?.role === "doctor";
   const isAdmin = auth.account?.role === "admin";
-  const isDoctorApproved = auth.account?.is_approved;
+  const isDoctorApproved = auth.info?.is_approved
 
   const [bannerOpen, setBannerOpen] = React.useState(true);
 

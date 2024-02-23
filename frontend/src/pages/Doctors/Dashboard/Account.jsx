@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import VerifyDoctorAccount from "../../../components/Doctors/VerifyDoctorAccount";
 import Container from "@mui/material/Container";
+import { useSelector } from "react-redux";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -42,6 +43,7 @@ function a11yProps(index) {
 
 const Account = () => {
   const [tabValue, setTabValue] = React.useState(0);
+  const isApproved = useSelector((state) => state.auth.info.is_approved)
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -58,14 +60,16 @@ const Account = () => {
             textColor="inherit"
             indicatorColor="primary"
           >
-            <Tab label="Verify Account" {...a11yProps(0)} />
+            {!isApproved && <Tab label="Verify Account" {...a11yProps(0)} />}
             <Tab label="Reset Password" {...a11yProps(1)} />
             <Tab label="Other Settings" {...a11yProps(2)} />
           </Tabs>
         </Box>
+        {!isApproved && (
         <CustomTabPanel value={tabValue} index={0}>
           <VerifyDoctorAccount />
         </CustomTabPanel>
+        )}
         <CustomTabPanel value={tabValue} index={1}>
           Reset Password
         </CustomTabPanel>

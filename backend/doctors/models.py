@@ -46,3 +46,7 @@ class DoctorVerification(models.Model):
 
     def __str__(self):
         return f'{self.license_number}'
+    
+    def delete(self, *args, **kwargs):
+        self.certificates.all().delete()
+        super().delete(*args, **kwargs)
