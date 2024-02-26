@@ -22,7 +22,7 @@ const VerificationDetails = () => {
         const response = await axios.get(
           `${
             import.meta.env.VITE_APP_API_BASE_URL
-          }/doctors/account-verification/${verificationId}/`,
+          }/doctors/api/account-verification/${verificationId}/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

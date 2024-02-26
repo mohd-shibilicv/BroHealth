@@ -8,7 +8,7 @@ const ProtectedAdminRoutes = (props) => {
   if (account?.role === 'admin') {
     return props.children;
   } else {
-    return <Navigate to="/admin-login" replace />;
+    return <Navigate to="/login" replace />;
   }
 };
 

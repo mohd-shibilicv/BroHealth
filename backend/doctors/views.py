@@ -1,10 +1,12 @@
 from rest_framework import generics, viewsets
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth import login
+from django.http import Http404
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
+from rest_framework.pagination import PageNumberPagination
 
 from accounts.permissions import IsDoctor
 from doctors.models import Doctor, DoctorVerification
@@ -35,3 +37,29 @@ class DoctorVerificationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = DoctorVerification.objects.all()
     serializer_class = DoctorVerificationSerializer
+
+
+class DoctorListView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get(self, request, format=None):
+        queryset = Doctor.objects.all()
+        paginator = PageNumberPagination()
+        page = paginator.paginate_queryset(queryset, request)
+        serializer = DoctorSerializer(page, many=True)
+        return Response(serializer.data)
+
+
+class DoctorDetailView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_object(self, pk):
+        try:
+            return Doctor.objects.get(pk=pk)
+        except Doctor.DoesNotExist:
+            raise Http404("Doctor does not exists.")
+
+    def get(self, request, pk, format=None):
+        doctor = self.get_object(pk)
+        serializer = DoctorSerializer(doctor)
+        return Response(serializer.data)

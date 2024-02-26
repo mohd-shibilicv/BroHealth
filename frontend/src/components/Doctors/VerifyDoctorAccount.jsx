@@ -57,7 +57,7 @@ const VerifyDoctorAccount = () => {
     });
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/doctors/account-verification/`, formData, {
+      const response = await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/doctors/api/account-verification/`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

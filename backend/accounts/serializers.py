@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.core.validators import MinLengthValidator, RegexValidator
+from django.conf import settings
 
 from accounts.models import User
 

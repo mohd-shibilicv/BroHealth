@@ -15,6 +15,7 @@ class Doctor(models.Model):
     class Meta:
         verbose_name = 'doctor'
         verbose_name_plural = 'doctors'
+        ordering = ['-years_of_experience']
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"

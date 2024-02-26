@@ -10,8 +10,10 @@ from accounts.serializers import UserSerializer
 
 class DoctorSerializer(serializers.ModelSerializer):
     """
-    A Serializer for the Doctor Model, That uses a nested UserSerializer.
+    A Serializer for the Doctor Model.
     """
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = Doctor
         fields = (

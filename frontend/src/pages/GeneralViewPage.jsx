@@ -16,6 +16,7 @@ import Doctors from "./Doctors";
 import Blogs from "./Blogs";
 import About from "./About";
 import Contact from "./Contact";
+import DoctorDetailsPage from "./DoctorDetailsPage";
 
 const GeneralViewPage = () => {
   return (
@@ -25,6 +26,7 @@ const GeneralViewPage = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/doctors" element={<Doctors />} />
+          <Route path="/doctors/:id" element={<DoctorDetailsPage />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />

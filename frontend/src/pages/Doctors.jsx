@@ -1,28 +1,45 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Pagination from "@mui/material/Pagination";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Doctors = () => {
   const [showFilter, setShowFilter] = useState(false);
   const [sort, setSort] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [categories, setCategories] = useState(["jhsgs", "sdfs", "jgajk"]);
-  const [doctors, setDoctors] = useState([
-    "Mr. jagsdj",
-    "jakhsg",
-    "jghas",
-    "jhsdgaj",
-    "jkhasgkj",
-  ]);
+  const [categories, setCategories] = useState();
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_APP_API_BASE_URL}/doctors/`,
+          {
+            params: {
+              page: page,
+            },
+          }
+        );
+        setDoctors(response.data);
+        setTotalPages(response.data.count);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        console.error("Failed to fetch data:", error);
+      }
+    };
+
+    fetchDoctors();
+  }, [page]);
 
   const handleFilterToggle = () => {
     setShowFilter(!showFilter);
@@ -59,24 +76,9 @@ const Doctors = () => {
           Filter
         </Button>
 
-        {/* Category Navlinks */}
-        {/* <div className="flex justify-center items-center" id="category-filter">
-          {categories.map((category, index) => (
-            <NavLink
-              key={index}
-              className="px-4 py-1 rounded-sm mr-4 bg-white border border-black hover:bg-black hover:text-white text-black active:bg-black active:text-white"
-            >
-              {category}
-            </NavLink>
-          ))}
-        </div> */}
-
         {/* Sort By Button */}
         <div className="flex justify-center items-center">
-          <form
-            method="get"
-            className="sorting-form flex gap-2 items-center"
-          >
+          <form method="get" className="sorting-form flex gap-2 items-center">
             <div className="relative">
               <select
                 name="sort"
@@ -107,7 +109,7 @@ const Doctors = () => {
       {/* Pagination */}
       <div className="flex justify-center items-center">
         <Pagination
-          count={10}
+          count={totalPages}
           page={page}
           onChange={handlePageChange}
           className="mt-20 justify-center"
@@ -121,24 +123,58 @@ const FilterForm = () => {
   // Implement your filter form logic here
   return (
     <div className="bg-white rounded p-4 shadow-md">
-      {/* Your filter form fields */}
+      jdfkjghjdkj
     </div>
   );
 };
 
 const DoctorCard = ({ doctor }) => {
+  const fullProfilePictureUrl = `${import.meta.env.VITE_APP_API_BASE_URL}${
+    doctor.user.profile_picture
+  }`;
+
   return (
-    <div className="bg-white rounded p-4 shadow-md">
-      <img src="/doctor7.jpg" alt={doctor.name} className="rounded-full mb-2" />
-      <h2 className="text-xl font-medium mb-1">sdhgas</h2>
-      <p className="text-gray-600">dasda</p>
-      <Button
-        variant="contained"
-        href={`/doctors/${doctor.id}`}
-        className="mt-2 bg-black hover:bg-gray-800 text-white"
+    <div className="h-full bg-white border border-black rounded p-4 shadow-md">
+      <div
+        key={doctor.id}
+        className="flex justify-center flex-col gap-2 items-center doctor-card"
       >
-        View Details
-      </Button>
+        <img
+          className="object-contain rounded-lg max-w-[250px] max-h-[250px]"
+          src={fullProfilePictureUrl}
+          alt={`${doctor.user.first_name} ${doctor.user.last_name}`}
+        />
+        <h2 className="font-semibold text-lg">
+          Dr. {doctor.user.first_name} {doctor.user.last_name}
+        </h2>
+        <p className="text-md">{doctor.specialization}</p>
+        <p className="text-sm">
+          {doctor.years_of_experience} years of experience
+        </p>
+      </div>
+      <Link
+        to={`/doctors/${doctor.id}`}
+        className="flex justify-center items-center my-3 relative"
+      >
+        <Button
+          fullWidth
+          variant="outlined"
+          color="inherit"
+          sx={{
+            mt: 3,
+            mb: 2,
+            color: "black",
+            backgroundColor: "#FFF",
+            borderColor: "black",
+            "&:hover": {
+              backgroundColor: "#000",
+              color: "white",
+            },
+          }}
+        >
+          View Details
+        </Button>
+      </Link>
     </div>
   );
 };

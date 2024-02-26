@@ -52,7 +52,7 @@ export default function AccountVerifications() {
         const response = await axios.get(
           `${
             import.meta.env.VITE_APP_API_BASE_URL
-          }/doctors/account-verification/`,
+          }/doctors/api/account-verification/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
