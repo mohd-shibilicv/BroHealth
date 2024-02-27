@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import HeroImage from "/heroimage.jpg";
+import HeroImage from "/edited.jpg";
 import { useSelector } from "react-redux";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";

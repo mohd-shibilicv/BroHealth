@@ -4,7 +4,9 @@ import Button from "@mui/material/Button";
 import Pagination from "@mui/material/Pagination";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import Box from "@mui/material/Box";
+import SearchIcon from "@mui/icons-material/Search";
 import { Link } from "react-router-dom";
+import { CircularProgress, TextField } from "@mui/material";
 
 const Doctors = () => {
   const [showFilter, setShowFilter] = useState(false);
@@ -14,6 +16,7 @@ const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -26,6 +29,7 @@ const Doctors = () => {
           {
             params: {
               page: page,
+              search: searchTerm,
             },
           }
         );
@@ -39,7 +43,7 @@ const Doctors = () => {
     };
 
     fetchDoctors();
-  }, [page]);
+  }, [searchTerm, page]);
 
   const handleFilterToggle = () => {
     setShowFilter(!showFilter);
@@ -47,6 +51,11 @@ const Doctors = () => {
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
+  };
+
+  const handleSearch = (e) => {
+    const searchTerm = e.target.value;
+    setSearchTerm(searchTerm);
   };
 
   const handleSortChange = (event) => {
@@ -76,8 +85,21 @@ const Doctors = () => {
           Filter
         </Button>
 
+        <div className="flex w-full justify-center items-center">
+          <div className="flex gap-2 border border-black px-2 py-2 rounded-md">
+            <SearchIcon />
+            <input
+              type="search"
+              className="outline-none text-black placeholder:text-gray-700"
+              placeholder="Search doctors"
+              onChange={handleSearch}
+              value={searchTerm}
+            />
+          </div>
+        </div>
+
         {/* Sort By Button */}
-        <div className="flex justify-center items-center">
+        <div className="hidden sm:flex justify-cemter items-center">
           <form method="get" className="sorting-form flex gap-2 items-center">
             <div className="relative">
               <select
@@ -100,11 +122,19 @@ const Doctors = () => {
       {showFilter && <FilterForm onApply={() => setShowFilter(false)} />}
 
       {/* Doctor Listing */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {doctors.map((doctor, index) => (
-          <DoctorCard key={index} doctor={doctor} />
-        ))}
-      </div>
+      {doctors.length !== 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {doctors.map((doctor, index) => (
+            <DoctorCard key={index} doctor={doctor} />
+          ))}
+        </div>
+      ) : (
+        <div className="w-1/3 flex justify-center items-center bg-white border border-black rounded p-4 shadow-md">
+          <h2 className="font-semibold text-lg">
+            No Doctor found matching the query "{searchTerm}"
+          </h2>
+        </div>
+      )}
 
       {/* Pagination */}
       <div className="flex justify-center items-center">
@@ -121,11 +151,7 @@ const Doctors = () => {
 
 const FilterForm = () => {
   // Implement your filter form logic here
-  return (
-    <div className="bg-white rounded p-4 shadow-md">
-      jdfkjghjdkj
-    </div>
-  );
+  return <div className="bg-white rounded p-4 shadow-md">jdfkjghjdkj</div>;
 };
 
 const DoctorCard = ({ doctor }) => {

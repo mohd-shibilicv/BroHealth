@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'patients.apps.PatientsConfig',
     'doctors.apps.DoctorsConfig',
     'admins.apps.AdminsConfig',
+    'appointments.apps.AppointmentsConfig',
 ]
 
 REST_FRAMEWORK = {
@@ -51,6 +52,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE':  10,
+    'DEFAULT_FILTER_BACKENDS': ['rest_framework.filters.SearchFilter'],
 }
 
 CORS_ALLOWED_ORIGINS = [

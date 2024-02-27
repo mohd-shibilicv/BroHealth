@@ -2,8 +2,10 @@ from rest_framework import generics, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter
 from django.contrib.auth import login
 from django.http import Http404
+from django.db.models import Q
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
@@ -42,8 +44,19 @@ class DoctorVerificationViewSet(viewsets.ModelViewSet):
 class DoctorListView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    def get_queryset(self):
+        queryset = Doctor.objects.filter(is_approved=True)
+        search_term = self.request.query_params.get('search', None)
+        if search_term:
+            queryset = queryset.filter(
+                Q(user__first_name__icontains=search_term) |
+                Q(user__last_name__icontains=search_term) |
+                Q(specialization__icontains=search_term)
+            )
+        return queryset
+
     def get(self, request, format=None):
-        queryset = Doctor.objects.all()
+        queryset = self.get_queryset()
         paginator = PageNumberPagination()
         page = paginator.paginate_queryset(queryset, request)
         serializer = DoctorSerializer(page, many=True)

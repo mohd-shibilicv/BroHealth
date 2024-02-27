@@ -4,7 +4,7 @@ from django.core.validators import MinLengthValidator, RegexValidator
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import authenticate
 
-from doctors.models import Doctor, Certificate, DoctorVerification
+from doctors.models import Doctor, Certificate, DoctorVerification, DoctorAvailability
 from accounts.serializers import UserSerializer
 
 
@@ -71,3 +71,18 @@ class DoctorVerificationSerializer(serializers.ModelSerializer):
         doctor_verification.save()
 
         return doctor_verification
+
+
+class DoctorAvailabilitySerializer(serializers.ModelSerializer):
+    """
+    A Serializer for the DoctorAvailability Model.
+    """
+    doctor = serializers.PrimaryKeyRelatedField(queryset=Doctor.objects.filter(is_approved=True))
+
+    class Meta:
+        model = DoctorAvailability
+        fields = [
+            'id',
+            'doctor',
+            'available_slots',
+        ]

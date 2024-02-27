@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
+from patients.models import Patient
+from doctors.models import Doctor
 
 
 class CustomUserManager(BaseUserManager):

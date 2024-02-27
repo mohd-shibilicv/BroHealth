@@ -51,3 +51,15 @@ class DoctorVerification(models.Model):
     def delete(self, *args, **kwargs):
         self.certificates.all().delete()
         super().delete(*args, **kwargs)
+
+
+class DoctorAvailability(models.Model):
+    doctor = models.OneToOneField('Doctor', on_delete=models.CASCADE, related_name="doctor_availability")
+    available_slots = models.JSONField(default=list)
+
+    class Meta:
+        verbose_name = 'doctor availability'
+        verbose_name_plural = 'doctor availabilities'
+
+    def __str__(self):
+        return f"Availability for Dr. {self.doctor.user.first_name} {self.doctor.user.last_name}"
