@@ -1,4 +1,6 @@
-from rest_framework import generics, viewsets
+from django.shortcuts import get_object_or_404
+from datetime import datetime
+from rest_framework import generics, viewsets, exceptions
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework import status
 from rest_framework.response import Response
@@ -11,8 +13,8 @@ from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 
 from accounts.permissions import IsDoctor
-from doctors.models import Doctor, DoctorVerification
-from doctors.serializers import DoctorSerializer, DoctorVerificationSerializer
+from doctors.models import Doctor, DoctorVerification, DoctorAvailability
+from doctors.serializers import DoctorSerializer, DoctorVerificationSerializer, DoctorAvailabilitySerializer
 
 
 class DoctorModelViewSet(viewsets.ModelViewSet):
@@ -76,3 +78,61 @@ class DoctorDetailView(APIView):
         doctor = self.get_object(pk)
         serializer = DoctorSerializer(doctor)
         return Response(serializer.data)
+
+
+class DoctorAvailabilityView(generics.ListCreateAPIView):
+    """
+    API view for listing and creating DoctorAvailability entries.
+    """
+    serializer_class = DoctorAvailabilitySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """
+        Override the queryset to only include availabilities for the logged-in doctor.
+        """
+        return DoctorAvailability.objects.filter(doctor=self.request.user.doctor)
+
+    def perform_create(self, serializer):
+        """
+        Override the create process to set the doctor based on the logged-in user.
+        """
+        doctor = self.request.user.doctor
+        serializer.save(doctor=doctor)
+
+
+class DoctorAvailabilityDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API view for retrieving, updating, and deleting a single DoctorAvailability entry.
+    """
+    queryset = DoctorAvailability.objects.all()
+    serializer_class = DoctorAvailabilitySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """
+        Override the queryset to only include availabilities for the logged-in doctor.
+        """
+        user = self.request.user
+        doctor = get_object_or_404(Doctor, user=user)
+        return DoctorAvailability.objects.filter(doctor=doctor)
+
+    def perform_update(self, serializer):
+        """
+        Override the update process to ensure that only the associated doctor can update the availability.
+        """
+        user = self.request.user
+        doctor = get_object_or_404(Doctor, user=user)
+        if serializer.validated_data['doctor'] != doctor:
+            raise exceptions.PermissionDenied("You do not have permission to update this availability.")
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        """
+        Override the deletion process to ensure that only the associated doctor can delete the availability.
+        """
+        user = self.request.user
+        doctor = get_object_or_404(Doctor, user=user)
+        if instance.doctor != doctor:
+            raise exceptions.PermissionDenied("You do not have permission to delete this availability.")
+        instance.delete()

@@ -1,7 +1,10 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
 from accounts.permissions import IsPatient
+from patients.models import Patient
+from doctors.models import Doctor
 from appointments.models import Appointment
 from appointments.serializers import AppointmentSerializer
 
@@ -15,7 +18,11 @@ class AppointmentListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(patient=self.request.user.patient)
+        doctor_id = self.request.query_params.get('doctor_id')
+        print(doctor_id)
+        doctor = get_object_or_404(Doctor, pk=doctor_id)
+        patient = get_object_or_404(Patient, user=self.request.user)
+        serializer.save(patient=patient, doctor=doctor)
 
 
 class AppointmentDetailView(generics.RetrieveUpdateDestroyAPIView):

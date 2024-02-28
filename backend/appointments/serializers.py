@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from django.utils import timezone
+import pytz
 
 from patients.models import Patient
 from doctors.models import Doctor
@@ -18,6 +20,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
             'id',
             'patient',
             'doctor',
+            'consultation_type',
             'date_and_time',
             'status',
             'additional_notes',

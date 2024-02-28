@@ -84,5 +84,5 @@ class DoctorAvailabilitySerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'doctor',
-            'available_slots',
+            'availability_schedule',
         ]

@@ -55,11 +55,19 @@ class DoctorVerification(models.Model):
 
 class DoctorAvailability(models.Model):
     doctor = models.OneToOneField('Doctor', on_delete=models.CASCADE, related_name="doctor_availability")
-    available_slots = models.JSONField(default=list)
+    availability_schedule = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = 'doctor availability'
         verbose_name_plural = 'doctor availabilities'
+        ordering = ['doctor']
 
     def __str__(self):
         return f"Availability for Dr. {self.doctor.user.first_name} {self.doctor.user.last_name}"
+    
+    def add_availability(self, date, slots):
+        """
+        Add or update availability for a specific date.
+        """
+        self.availability_schedule[date] = slots
+        self.save()

@@ -12,8 +12,15 @@ class Appointment(models.Model):
         ('canceled', 'Canceled'),
     )
 
+    CONSULTATION_TYPE_CHOICES = (
+        ('new_consultation', 'New Consultation'),
+        ('prescription', 'Prescription Request'),
+        ('follow_up', 'Follow-up Appointment'),
+    )
+
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='appointments_as_patient')
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='appointments_as_doctor')
+    consultation_type = models.CharField(max_length=30, choices=CONSULTATION_TYPE_CHOICES, default='new_consultation')
     date_and_time = models.DateTimeField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     additional_notes = models.TextField(blank=True)
@@ -26,4 +33,4 @@ class Appointment(models.Model):
         ordering = ['date_and_time']
 
     def __str__(self):
-        return f"Appointment with {self.doctor.user.first_name} on {self.date_and_time}"
+        return f"Appointment of {self.patient.user.first_name} {self.patient.user.last_name} with Dr. {self.doctor.user.first_name} {self.doctor.user.last_name} on {self.date_and_time}"

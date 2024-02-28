@@ -17,6 +17,7 @@ import Blogs from "./Blogs";
 import About from "./About";
 import Contact from "./Contact";
 import DoctorDetailsPage from "./DoctorDetailsPage";
+import AppointmentPage from "./AppointmentPage";
 
 const GeneralViewPage = () => {
   return (
@@ -27,6 +28,7 @@ const GeneralViewPage = () => {
           <Route path="/" element={<Home />} />
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/doctors/:id" element={<DoctorDetailsPage />} />
+          <Route path="/appointment/:id" element={<ProtectedRoute><AppointmentPage /></ProtectedRoute>} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />

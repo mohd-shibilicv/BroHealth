@@ -1,7 +1,7 @@
 import { Box, Button, CircularProgress } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import DoctorDetailsTabs from "../components/Generals/DoctorDetailsTabs";
 
 const DoctorDetailsPage = () => {
@@ -66,7 +66,7 @@ const DoctorDetailsPage = () => {
                   </div>
                 </>
               )}
-              <div>
+              <Link to={`/appointment/${id}`} state={{ doctor }}>
                 <Button
                   fullWidth
                   variant="outlined"
@@ -85,7 +85,7 @@ const DoctorDetailsPage = () => {
                 >
                   Schedule an Appointment
                 </Button>
-              </div>
+              </Link>
             </div>
           </div>
         </div>
