@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'doctors.apps.DoctorsConfig',
     'admins.apps.AdminsConfig',
     'appointments.apps.AppointmentsConfig',
+    'notifications.apps.NotificationsConfig',
 ]
 
 REST_FRAMEWORK = {

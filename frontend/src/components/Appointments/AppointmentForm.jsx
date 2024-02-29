@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Button, MenuItem, TextField } from "@mui/material";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -9,6 +9,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { StaticTimePicker } from "@mui/x-date-pickers/StaticTimePicker";
 import { TimeField } from "@mui/x-date-pickers/TimeField";
 import { DigitalClock } from "@mui/x-date-pickers/DigitalClock";
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 const shouldDisableTime = (value, view) => {
   const hour = value.hour();
@@ -27,6 +29,7 @@ const AppointmentPage = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const patient = useSelector((state) => state.auth.info);
+  const navigate = useNavigate();
 
   const { doctor } = location.state;
 
@@ -36,7 +39,6 @@ const AppointmentPage = () => {
   
     try {
       const formattedDateTime = `${selectedDate}T${selectedTime}:00Z`;
-      console.log(formattedDateTime);
 
       const response = await axios.post(
         `${import.meta.env.VITE_APP_API_BASE_URL}/appointments/`,
@@ -57,13 +59,31 @@ const AppointmentPage = () => {
         }
       );
       setLoading(false);
+      toast.success("Successfully made an appointment request!\nConfirmation mail will be sent to you on doctor approval", {
+        style: {
+          background: "#000",
+          color: "#fff",
+        },
+        position: "bottom-right",
+        pauseOnHover: true,
+        draggable: true,
+      });
+      setTimeout(() => {
+        navigate(`/doctors/${doctor.id}`);
+      }, 3000);
   
-      // Handle success, e.g., redirect to a confirmation page
-      console.log('Appointment created successfully:', response.data);
     } catch (error) {
     setLoading(false);
       console.error('Failed to create appointment:', error);
-      // Handle error, e.g., show an error message to the user
+      toast.error("Error making an appointment with the doctor.\n Try again later.", {
+        style: {
+          background: "#000",
+          color: "#fff",
+        },
+        position: "bottom-right",
+        pauseOnHover: true,
+        draggable: true,
+      });
     }
   };
 
@@ -79,6 +99,7 @@ const AppointmentPage = () => {
 
   return (
     <div className="container mx-auto mt-8 p-4">
+      <ToastContainer />
       <h2 className="text-2xl text-center font-semibold mb-6">
         Schedule an Appointment
       </h2>

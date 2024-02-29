@@ -7,7 +7,6 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { useSelector } from "react-redux";
 import DoctorAppointments from '../../../components/Appointments/DoctorAppointments';
-import DoctorAvailability from '../../../components/Appointments/DoctorAvailability';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -51,26 +50,8 @@ const Appointments = () => {
 
   return (
     <>
-      <Box sx={{ width: "100%" }}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs
-            value={tabValue}
-            onChange={handleTabChange}
-            aria-label="appointment tabs"
-            textColor="inherit"
-            indicatorColor="primary"
-          >
-            <Tab label="Appointments" {...a11yProps(0)} />
-            <Tab label="Availability" {...a11yProps(1)} />
-          </Tabs>
-        </Box>
-        <CustomTabPanel value={tabValue} index={0}>
-          <DoctorAppointments />
-        </CustomTabPanel>
-        <CustomTabPanel value={tabValue} index={1}>
-          <DoctorAvailability />
-        </CustomTabPanel>
-      </Box>
+      <div className='text-xl font-semibold mb-4 w-full text-center'>Appointments</div>
+      <DoctorAppointments />
     </>
   )
 }

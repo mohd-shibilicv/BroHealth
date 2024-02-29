@@ -16,6 +16,8 @@ class PatientSerializer(serializers.ModelSerializer):
     """
     A Serializer for the Patient Model.
     """
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = Patient
         fields = ('id', 'user', 'medical_history', 'prescription', 'preferred_timezone', 'preferred_language', 'emergency_contact', 'is_verified')

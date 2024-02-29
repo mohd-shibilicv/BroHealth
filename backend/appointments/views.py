@@ -19,7 +19,6 @@ class AppointmentListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         doctor_id = self.request.query_params.get('doctor_id')
-        print(doctor_id)
         doctor = get_object_or_404(Doctor, pk=doctor_id)
         patient = get_object_or_404(Patient, user=self.request.user)
         serializer.save(patient=patient, doctor=doctor)
@@ -32,3 +31,8 @@ class AppointmentDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['partial'] = True
+        return context

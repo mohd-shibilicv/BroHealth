@@ -97,16 +97,18 @@ export default function AccountVerifications() {
     }
   };
 
-  const rows = data.map((item, index) =>
-    createData(
-      item.id,
-      item.doctor,
-      item.license_number,
-      item.licensure_information,
-      item.verification_status,
-      index
-    )
-  );
+  const rows = Array.isArray(data)
+    ? data.map((item, index) =>
+        createData(
+          item.id,
+          item.doctor,
+          item.license_number,
+          item.licensure_information,
+          item.verification_status,
+          index
+        )
+      )
+    : [];
 
   function createData(
     verification_id,

@@ -3,7 +3,9 @@ from django.utils import timezone
 import pytz
 
 from patients.models import Patient
+from patients.serializers import PatientSerializer
 from doctors.models import Doctor
+from doctors.serializers import DoctorSerializer
 from appointments.models import Appointment
 
 
@@ -11,8 +13,8 @@ class AppointmentSerializer(serializers.ModelSerializer):
     """
     A Serializer for the Appointment model.
     """
-    patient = serializers.PrimaryKeyRelatedField(queryset=Patient.objects.filter(is_verified=True))
-    doctor = serializers.PrimaryKeyRelatedField(queryset=Doctor.objects.filter(is_approved=True))
+    patient = PatientSerializer(read_only=True)
+    doctor = DoctorSerializer(read_only=True)
 
     class Meta:
         model = Appointment

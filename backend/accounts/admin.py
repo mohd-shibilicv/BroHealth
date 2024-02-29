@@ -18,7 +18,7 @@ class CustomUserAdmin(UserAdmin):
     # Specify the fields to be displayed in the detail view
     fieldsets = (
         (None, {'fields': ('email', 'password', 'role')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'date_of_birth', 'gender', 'address', 'mobile_number', 'profile_picture')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'age', 'gender', 'address', 'mobile_number', 'profile_picture')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
     )
 
