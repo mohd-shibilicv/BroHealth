@@ -110,7 +110,7 @@ const PatientAppointments = () => {
 
   return (
     <div className="flex w-full justify-center">
-      <Box sx={{ height: 500, width: "100%" }}>
+      <Box sx={{ height: 500 }}>
         <DataGrid
           autoHeight
           rows={rows}

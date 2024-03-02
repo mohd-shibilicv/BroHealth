@@ -60,6 +60,9 @@ const DoctorDetailsPage = () => {
                     <p className="text-gray-900 font-semibold">
                       {doctor.specialization}
                     </p>
+                    <p className="text-gray-800 font-medium">
+                      $ {doctor.consultation_fee} per appointment
+                    </p>
                     <p className="text-gray-900 font-semibold">
                       {doctor?.years_of_experience} years of experience
                     </p>

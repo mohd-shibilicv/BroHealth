@@ -44,7 +44,8 @@ const DashboardProfile = () => {
   const [address, setAddress] = useState(account.address);
   const [mobileNumber, setMobileNumber] = useState(account.mobile_number);
   const [specialization, setSpecialization] = useState(info.specialization);
-  const [years_of_experience, setYearsOfExperience] = useState(info.years_of_experience);
+  const [consultaionFee, setConsultationFee] = useState(info.consultaion_fee);
+  const [yearsOfExperience, setYearsOfExperience] = useState(info.years_of_experience);
   const [education, setEducation] = useState(
     info.education
   );
@@ -145,7 +146,8 @@ const DashboardProfile = () => {
     const data = {
       user: user,
       spacialization: specialization,
-      years_of_experience: years_of_experience,
+      consultaion_fee: consultaionFee,
+      years_of_experience: yearsOfExperience,
       preferred_timezone: education,
       preferred_language: clinic_address,
       emergency_contact: clinic_phone_number,
@@ -242,6 +244,9 @@ const DashboardProfile = () => {
               <div>
                 <p>
                   spacialization: <span>{info?.specialization}</span>
+                </p>
+                <p>
+                  Consultation Fee: <span>{info?.consultaion_fee}</span>
                 </p>
                 <p>
                   years_of_experience: <span>{info?.years_of_experience}</span>

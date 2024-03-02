@@ -232,7 +232,7 @@ const DoctorAppointments = () => {
   return (
     <div className="flex w-full justify-center">
       <ToastContainer />
-      <Box sx={{ height: 500, width: "100%" }}>
+      <Box sx={{ height: 500 }}>
         <DataGrid
           autoHeight
           rows={rows}
@@ -298,6 +298,20 @@ const DoctorAppointments = () => {
             <TextField
               label="Prescriptions"
               value={selectedAppointment?.patient.prescription}
+              fullWidth
+              readOnly
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="Date & Time"
+              value={moment.utc(selectedAppointment?.date_and_time).format("MMMM Do YYYY, h:mm:ss a")}
+              fullWidth
+              readOnly
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="Additional Notes"
+              value={selectedAppointment?.additional_notes}
               fullWidth
               readOnly
               sx={{ mb: 2 }}

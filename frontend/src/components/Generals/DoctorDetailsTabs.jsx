@@ -5,6 +5,9 @@ import Tab from "@mui/material/Tab";
 import PropTypes from "prop-types";
 import Container from "@mui/material/Container";
 import { CircularProgress } from "@mui/material";
+import DoctorAboutTab from "./DoctorAboutTab";
+import DoctorEducationTab from "./DoctorEducationTab";
+import DoctorContactTab from "./DoctorContactTab";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -71,13 +74,13 @@ export default function DoctorDetailsTabs({ doctor }) {
       {doctor.user ? (
         <>
           <CustomTabPanel value={value} index={0}>
-            <p>{doctor.user.address}</p>
+            <DoctorAboutTab doctor={doctor} />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
-            <p>{doctor.education}</p>
+            <DoctorEducationTab doctor={doctor} />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
-            <p>{doctor.user.mobile_number}</p>
+            <DoctorContactTab doctor={doctor} />
           </CustomTabPanel>
         </>
       ) : (
