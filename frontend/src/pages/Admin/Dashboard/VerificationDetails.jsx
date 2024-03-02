@@ -52,7 +52,7 @@ const VerificationDetails = () => {
           },
         }
       );
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 204 ) {
         setLoading(false);
         toast.success("Doctor Verification Approved!", {
           style: {

@@ -60,7 +60,7 @@ export default function AccountVerifications() {
           }
         );
         setLoading(false);
-        setData(response.data);
+        setData(response.data.results);
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
