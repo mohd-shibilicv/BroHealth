@@ -13,9 +13,20 @@ class AppointmentListCreateView(generics.ListCreateAPIView):
     """
     API view for listing and creating Appointments.
     """
-    queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """
+        Override the queryset to return appointments based on the user role.
+        """
+        user = self.request.user
+        if Doctor.objects.filter(user=user).exists():
+            return Appointment.objects.filter(doctor__user=user)
+        elif Patient.objects.filter(user=user).exists():
+            return Appointment.objects.filter(patient__user=user)
+        else:
+            return Appointment.objects.all()
 
     def perform_create(self, serializer):
         doctor_id = self.request.query_params.get('doctor_id')
@@ -32,7 +43,5 @@ class AppointmentDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AppointmentSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context['partial'] = True
-        return context
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)

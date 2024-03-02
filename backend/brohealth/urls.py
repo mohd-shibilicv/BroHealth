@@ -28,6 +28,7 @@ urlpatterns = [
     path('patients/', include('patients.urls', namespace='patients')),
     path('doctors/', include('doctors.urls', namespace='doctors')),
     path('appointments/', include('appointments.urls', namespace='appointments')),
+    path('notifications/', include('notifications.urls', namespace='notifications')),
     path('admins/', include('admins.urls', namespace='admins')),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

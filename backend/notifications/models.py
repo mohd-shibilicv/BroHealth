@@ -19,7 +19,7 @@ class Notification(models.Model):
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
-    notification_type = models.CharField(max_length=2, choices=NOTIFICATION_TYPE_CHOICES, default=INFO)
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPE_CHOICES, default=INFO)
 
     class Meta:
         abstract = True

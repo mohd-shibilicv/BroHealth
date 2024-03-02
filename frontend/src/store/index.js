@@ -3,11 +3,13 @@ import { combineReducers } from "redux";
 import { 
   FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE
 } from "redux-persist";
+import notificationsSlice from '../store/slices/NotificationsSlice.js'
 import storage from "redux-persist/lib/storage";
 import authSlice from "./slices/auth";
 
 const rootReducer = combineReducers({
-  auth: authSlice.reducer
+  auth: authSlice.reducer,
+  notifications: notificationsSlice.reducer,
 });
 
 const persistedReducer = persistReducer(

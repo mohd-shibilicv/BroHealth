@@ -20,13 +20,13 @@ import DialogContent from "@mui/material/DialogContent";
 import Select from "@mui/material/Select";
 import DialogActions from "@mui/material/DialogActions";
 import moment from "moment-timezone";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const DoctorAppointments = () => {
   const [appointments, setAppointments] = React.useState([]);
   const [selectedAppointment, setSelectedAppointment] = React.useState(null);
-  const [status, setStatus] = React.useState('')
+  const [status, setStatus] = React.useState("");
   const [openModal, setOpenModal] = React.useState(false);
   const token = useSelector((state) => state.auth.token);
 
@@ -56,10 +56,14 @@ const DoctorAppointments = () => {
       width: 150,
       renderCell: (params) => (
         <div className="flex justify-center items-center">
-          {params.row.status === 'pending' ? (
-            <p className="p-2 rounded-lg bg-yellow-100 text-yellow-800">Pending</p>
-          ) : params.row.status === 'confirmed' ? (
-            <p className="p-2 rounded-lg bg-indigo-100 text-indigo-800">Confirmed</p>
+          {params.row.status === "pending" ? (
+            <p className="p-2 rounded-lg bg-yellow-100 text-yellow-800">
+              Pending
+            </p>
+          ) : params.row.status === "confirmed" ? (
+            <p className="p-2 rounded-lg bg-indigo-100 text-indigo-800">
+              Confirmed
+            </p>
           ) : (
             <p className="p-2 rounded-lg bg-red-100 text-red-800">Canceled</p>
           )}
@@ -134,8 +138,8 @@ const DoctorAppointments = () => {
           selectedAppointment.id
         }/`,
         {
-          date_and_time: selectedAppointment.date_and_time,
           status: status,
+          date_and_time: selectedAppointment.date_and_time,
         },
         {
           headers: {
@@ -143,8 +147,43 @@ const DoctorAppointments = () => {
           },
         }
       );
+      if (status === "confirmed") {
+        const notificationData = {
+          message: `Your appointment with Dr. ${selectedAppointment.doctor.user.first_name} ${selectedAppointment.doctor.user.last_name} on ${moment.utc(selectedAppointment.date_and_time).format("MMMM Do YYYY, h:mm:ss a")} has been confirmed!`,
+          notification_type: "APPOINTMENT",
+          patient: selectedAppointment.patient.id,
+          related_appointment: selectedAppointment.id,
+        };
+
+        await axios.post(
+          `${import.meta.env.VITE_APP_API_BASE_URL}/notifications/patient-notifications/`,
+          notificationData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
+      if (status === "canceled") {
+        const notificationData = {
+          message: `Your appointment with Dr. ${selectedAppointment.doctor.user.first_name} ${selectedAppointment.doctor.user.last_name} on ${moment.utc(selectedAppointment.date_and_time).format("MMMM Do YYYY, h:mm:ss a")} has been canceled!`,
+          notificaton_type: "APPOINTMENT",
+          patient: selectedAppointment.patient.id,
+          related_appointment: selectedAppointment.id,
+        };
+
+        await axios.post(
+          `${import.meta.env.VITE_APP_API_BASE_URL}/notifications/patient-notifications/`,
+          notificationData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
       console.log("Status updated successfully:", response.data);
-      // Update the local state with the updated status
       setAppointments((prevAppointments) =>
         prevAppointments.map((appointment) =>
           appointment.id === selectedAppointment.id
@@ -193,8 +232,9 @@ const DoctorAppointments = () => {
   return (
     <div className="flex w-full justify-center">
       <ToastContainer />
-      <Box sx={{ height: 500 }}>
+      <Box sx={{ height: 500, width: "100%" }}>
         <DataGrid
+          autoHeight
           rows={rows}
           columns={columns}
           pageSize={5}
@@ -267,9 +307,7 @@ const DoctorAppointments = () => {
               label="Status"
               defaultValue={selectedAppointment?.status}
               fullWidth
-              onChange={(e) =>
-                setStatus(e.target.value)
-              }
+              onChange={(e) => setStatus(e.target.value)}
               sx={{ mb: 2 }}
             >
               <MenuItem value="confirmed">Confirmed</MenuItem>

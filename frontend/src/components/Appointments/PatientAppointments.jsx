@@ -5,7 +5,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Tooltip } from "@mui/material";
-import moment from 'moment-timezone';
+import moment from "moment-timezone";
 
 const handleViewDetails = (appointmentId) => {
   // Add your logic to navigate to the details page or open a modal
@@ -13,38 +13,54 @@ const handleViewDetails = (appointmentId) => {
 };
 
 const columns = [
-  { field: "id", headerName: "ID", width: 200, minWidth: 100 },
+  { field: "id", headerName: "ID", width: 150 },
   {
     field: "doctorName",
     headerName: "Doctor",
-    width: 300,
-    minWidth: 200
+    width: 200,
+    minWidth: 200,
   },
   {
     field: "consultationType",
     headerName: "Appointment Type",
     width: 200,
-    minWidth: 200
+    minWidth: 200,
   },
   {
     field: "dateAndTime",
     headerName: "Date & Time",
     type: "datetime",
-    width: 250,
+    width: 200,
     minWidth: 200,
-    valueFormatter: (params) => moment.utc(params.value).format('MMMM Do YYYY, h:mm:ss a')
+    valueFormatter: (params) =>
+      moment.utc(params.value).format("MMMM Do YYYY, h:mm:ss a"),
   },
   {
     field: "status",
     headerName: "Status",
-    width: 150,
-    minWidth: 200
+    width: 200,
+    minWidth: 200,
+    renderCell: (params) => (
+      <div className="flex justify-center items-center">
+        {params.row.status === "pending" ? (
+          <p className="p-2 rounded-lg bg-yellow-100 text-yellow-800">
+            Pending
+          </p>
+        ) : params.row.status === "confirmed" ? (
+          <p className="p-2 rounded-lg bg-indigo-100 text-indigo-800">
+            Confirmed
+          </p>
+        ) : (
+          <p className="p-2 rounded-lg bg-red-100 text-red-800">Canceled</p>
+        )}
+      </div>
+    ),
   },
   {
     field: "actions",
     headerName: "Actions",
     width: 100,
-    minWidth: 200,
+    minWidth: 100,
     renderCell: (params) => (
       <div className="flex justify-center">
         <Tooltip title="view" placement="right">
@@ -85,7 +101,7 @@ const PatientAppointments = () => {
   const rows = Array.isArray(appointments)
     ? appointments.map((appointment) => ({
         id: appointment.id,
-        doctorName: `${appointment.doctor.user.first_name} ${appointment.doctor.user.last_name}`,
+        doctorName: `Dr. ${appointment.doctor.user.first_name} ${appointment.doctor.user.last_name}`,
         consultationType: appointment.consultation_type,
         dateAndTime: appointment.date_and_time,
         status: appointment.status,
@@ -94,15 +110,14 @@ const PatientAppointments = () => {
 
   return (
     <div className="flex w-full justify-center">
-      <Box sx={{ height: 500 }}>
+      <Box sx={{ height: 500, width: "100%" }}>
         <DataGrid
+          autoHeight
           rows={rows}
           columns={columns}
           pageSize={5}
           pageSizeOptions={[5, 10, 25, 100]}
-          
           disableRowSelectionOnClick
-
         />
       </Box>
     </div>

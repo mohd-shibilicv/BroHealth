@@ -1,8 +1,11 @@
 import React from 'react'
+import DoctorNotifications from '../../../components/Notifications/DoctorNotifications'
 
 const Notifications = () => {
   return (
-    <div>Doctor Notifications</div>
+    <>
+      <DoctorNotifications />
+    </>
   )
 }
 

@@ -59,7 +59,7 @@ const AppointmentPage = () => {
         }
       );
       setLoading(false);
-      toast.success("Successfully made an appointment request!\nConfirmation mail will be sent to you on doctor approval", {
+      toast.success("Successfully made an appointment request!\nConfirmation notification will be sent to you on doctor approval", {
         style: {
           background: "#000",
           color: "#fff",

@@ -28,7 +28,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Tooltip } from "@mui/material";
+import { Badge, Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -40,6 +40,7 @@ import authSlice from "../../store/slices/auth";
 import { ToastContainer, toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { selectUnreadNotificationsCount } from "../../store/slices/NotificationsSlice.js";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -121,6 +122,7 @@ export default function DashboardNavbar({ content }) {
   const auth = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const unreadNotifications = useSelector(selectUnreadNotificationsCount);
 
   const handleLogout = () => {
     dispatch(authSlice.actions.logout());
@@ -164,10 +166,17 @@ export default function DashboardNavbar({ content }) {
             <Link to="/">
               <div className="text-black-600 md:order-1 flex gap-1 items-center">
                 <MedicationIcon color="dark" fontSize="large" />
-                <p className="hidden md:block font-medium md:text-lg">BroHealth</p>
+                <p className="hidden md:block font-medium md:text-lg">
+                  BroHealth
+                </p>
               </div>
             </Link>
-            <Typography variant="h6" noWrap component="span" className="text-lg font-medium">
+            <Typography
+              variant="h6"
+              noWrap
+              component="span"
+              className="text-lg font-medium"
+            >
               {auth.account.first_name} {auth.account.last_name}
             </Typography>
             <Tooltip title="Log out" arrow>
@@ -356,7 +365,9 @@ export default function DashboardNavbar({ content }) {
                     color: "black",
                   }}
                 >
-                  <CircleNotificationsIcon />
+                  <Badge color="error" badgeContent={unreadNotifications}>
+                    <CircleNotificationsIcon />
+                  </Badge>
                 </ListItemIcon>
               </Tooltip>
               <ListItemText

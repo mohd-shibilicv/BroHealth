@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { CircularProgress, Tooltip } from "@mui/material";
-import moment from 'moment-timezone';
+import moment from "moment-timezone";
 
 const handleViewDetails = (appointmentId) => {
   // Add your logic to navigate to the details page or open a modal
@@ -14,37 +14,49 @@ const handleViewDetails = (appointmentId) => {
 };
 
 const columns = [
-  { field: "id", headerName: "ID", width: 150,  },
+  { field: "id", headerName: "ID", width: 150 },
   {
     field: "patientName",
     headerName: "Patient",
     width: 250,
-    
   },
   {
     field: "doctorName",
     headerName: "Doctor",
     width: 250,
-    
   },
   {
     field: "consultationType",
     headerName: "Appointment Type",
     width: 200,
-    
   },
   {
     field: "dateAndTime",
     headerName: "Date & Time",
     type: "datetime",
     width: 250,
-    valueFormatter: (params) => moment.utc(params.value).format('MMMM Do YYYY, h:mm:ss a')
+    valueFormatter: (params) =>
+      moment.utc(params.value).format("MMMM Do YYYY, h:mm:ss a"),
   },
   {
     field: "status",
     headerName: "Status",
     width: 150,
-    
+    renderCell: (params) => (
+      <div className="flex justify-center items-center">
+        {params.row.status === "pending" ? (
+          <p className="p-2 rounded-lg bg-yellow-100 text-yellow-800">
+            Pending
+          </p>
+        ) : params.row.status === "confirmed" ? (
+          <p className="p-2 rounded-lg bg-indigo-100 text-indigo-800">
+            Confirmed
+          </p>
+        ) : (
+          <p className="p-2 rounded-lg bg-red-100 text-red-800">Canceled</p>
+        )}
+      </div>
+    ),
   },
   {
     field: "actions",
@@ -84,7 +96,7 @@ const AdminAppointments = () => {
             },
           }
         );
-        console.log(response.data)
+        console.log(response.data);
         setAppointments(response.data.results);
       } catch (error) {
         console.error("Failed to fetch appointments:", error);
@@ -107,8 +119,9 @@ const AdminAppointments = () => {
 
   return (
     <div className="flex w-full justify-center">
-      <Box sx={{ height: 500 }}>
+      <Box sx={{ height: 500, width: "100%" }}>
         <DataGrid
+          autoHeight
           rows={rows}
           columns={columns}
           pageSize={5}
