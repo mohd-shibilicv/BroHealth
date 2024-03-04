@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'admins.apps.AdminsConfig',
     'appointments.apps.AppointmentsConfig',
     'notifications.apps.NotificationsConfig',
+    'payments.apps.PaymentsConfig',
 ]
 
 REST_FRAMEWORK = {
@@ -193,3 +194,8 @@ SIMPLE_JWT = {
     "AUTH_COOKIE_PATH": "/",  # URL path where cookie will be sent
     "AUTH_COOKIE_SAMESITE": "Lax",  # specifies whether the cookie should be sent in cross site requests
 }
+
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
+
+SITE_URL = os.getenv('FRONTEND_BASE_URL')

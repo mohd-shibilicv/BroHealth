@@ -24,6 +24,7 @@ class Appointment(models.Model):
     date_and_time = models.DateTimeField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     additional_notes = models.TextField(blank=True)
+    paid = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
