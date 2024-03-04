@@ -10,6 +10,7 @@ import Prescriptions from './Patients/Dashboard/Prescriptions'
 import ChatSection from './Patients/Dashboard/ChatSection'
 import Notifications from './Patients/Dashboard/Notifications'
 import Account from './Patients/Dashboard/Account'
+import PatientAppointmentDetails from '../components/Appointments/PatientAppointmentDetails'
 
 const PatientDashboardView = () => {
   return (
@@ -18,6 +19,7 @@ const PatientDashboardView = () => {
             <Routes>
                 <Route path="/" element={<DashboardPage />} />
                 <Route path="/appointments" element={<Appointments />} />
+                <Route path="/appointments/:appointmentId" element={<PatientAppointmentDetails />} />
                 <Route path="/medical-history" element={<MedicalHistory />} />
                 <Route path="/prescriptions" element={<Prescriptions />} />
                 <Route path="/chat" element={<ChatSection />} />

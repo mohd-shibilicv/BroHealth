@@ -6,6 +6,8 @@ import { useSelector } from "react-redux";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Tooltip } from "@mui/material";
 import moment from "moment-timezone";
+import ErrorBoundary from "../../layouts/ErrorBoundary";
+import { Link } from "react-router-dom";
 
 const handleViewDetails = (appointmentId) => {
   // Add your logic to navigate to the details page or open a modal
@@ -64,10 +66,12 @@ const columns = [
     renderCell: (params) => (
       <div className="flex justify-center">
         <Tooltip title="view" placement="right">
-          <VisibilityIcon
+          <Link
+            to={`/dashboard/appointments/${params.row.id}`}
             className="hover:text-indigo-900 cursor-pointer"
-            onClick={() => handleViewDetails(params.row.id)}
-          />
+          >
+            <VisibilityIcon />
+          </Link>
         </Tooltip>
       </div>
     ),
@@ -109,18 +113,25 @@ const PatientAppointments = () => {
     : [];
 
   return (
-    <div className="flex w-full justify-center">
-      <Box sx={{ height: 500 }}>
-        <DataGrid
-          autoHeight
-          rows={rows}
-          columns={columns}
-          pageSize={5}
-          pageSizeOptions={[5, 10, 25, 100]}
-          disableRowSelectionOnClick
-        />
-      </Box>
-    </div>
+    <ErrorBoundary>
+      <div className="flex w-full justify-center">
+        <Box sx={{ height: 500 }}>
+          <DataGrid
+            autoHeight
+            rows={rows}
+            columns={columns}
+            pageSize={5}
+            pageSizeOptions={[5, 10, 25, 100]}
+            disableRowSelectionOnClick
+            initialState={{
+              sorting: {
+                sortModel: [{ field: 'id', sort: 'desc' }],
+              },
+            }}
+          />
+        </Box>
+      </div>
+    </ErrorBoundary>
   );
 };
 

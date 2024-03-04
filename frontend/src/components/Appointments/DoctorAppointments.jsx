@@ -76,12 +76,14 @@ const DoctorAppointments = () => {
       width: 100,
       renderCell: (params) => (
         <div className="flex justify-center">
-          <Tooltip title="View" placement="right">
-            <VisibilityIcon
-              className="hover:text-indigo-900 cursor-pointer"
-              onClick={() => handleViewDetails(params.row)}
-            />
-          </Tooltip>
+          {params.row.status !== 'canceled' && (
+            <Tooltip title="View" placement="right">
+              <VisibilityIcon
+                className="hover:text-indigo-900 cursor-pointer"
+                onClick={() => handleViewDetails(params.row)}
+              />
+            </Tooltip>
+          )}
         </div>
       ),
     },
@@ -89,7 +91,6 @@ const DoctorAppointments = () => {
 
   const handleViewDetails = async (appointment) => {
     try {
-      console.log(appointment);
       const response = await axios.get(
         `${import.meta.env.VITE_APP_API_BASE_URL}/appointments/${
           appointment.id
@@ -242,7 +243,7 @@ const DoctorAppointments = () => {
           disableRowSelectionOnClick
         />
       </Box>
-      {selectedAppointment && (
+      {(selectedAppointment && selectedAppointment.status !== 'canceled') && (
         <Dialog open={openModal} onClose={handleCloseModal}>
           <DialogTitle>Appointment Details</DialogTitle>
           <DialogContent>

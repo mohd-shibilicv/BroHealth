@@ -1,6 +1,8 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from rest_framework.response import Response
 
 from accounts.permissions import IsPatient
 from patients.models import Patient
@@ -45,3 +47,39 @@ class AppointmentDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
+
+
+class AppointmentCancelView(generics.UpdateAPIView):
+    """
+    API view for canceling Appointments.
+    """
+    queryset = Appointment.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = AppointmentSerializer
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance.status not in ['canceled', 'completed']:
+            instance.status = 'canceled'
+            instance.save()
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'detail': 'Appointment cannot be canceled'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AppointmentRescheduleView(generics.UpdateAPIView):
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        new_date_and_time = request.data.get('date_and_time')
+        instance.date_and_time = new_date_and_time
+        instance.save()
+
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
