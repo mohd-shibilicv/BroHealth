@@ -9,7 +9,7 @@ import DashboardProfile from "./Doctors/Dashboard/DashboardProfile";
 import Account from "./Doctors/Dashboard/Account";
 import DashboardNavbar from "../components/Doctors/DashboardNavbar";
 import Patients from "./Doctors/Dashboard/Patients";
-import Payments from "./Doctors/Dashboard/Payments";
+import DoctorAppointmentDetails from "../components/Appointments/DoctorAppointmentDetails";
 
 const DoctorDashboardView = () => {
   return (
@@ -19,8 +19,8 @@ const DoctorDashboardView = () => {
           <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/appointments" element={<Appointments />} />
+            <Route path="/appointments/:appointmentId" element={<DoctorAppointmentDetails />} />
             <Route path="/patients" element={<Patients />} />
-            <Route path="/payments" element={<Payments />} />
             <Route path="/chat" element={<ChatSection />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/profile" element={<DashboardProfile />} />

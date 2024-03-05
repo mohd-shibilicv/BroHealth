@@ -11,7 +11,6 @@ import ChatSection from "./Patients/Dashboard/ChatSection";
 import Notifications from "./Patients/Dashboard/Notifications";
 import Account from "./Patients/Dashboard/Account";
 import PatientAppointmentDetails from "../components/Appointments/PatientAppointmentDetails";
-import PaymentPage from "./PaymentPage";
 
 const PatientDashboardView = () => {
   return (

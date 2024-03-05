@@ -4,6 +4,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   CircularProgress,
   Tooltip,
@@ -22,6 +23,7 @@ import DialogActions from "@mui/material/DialogActions";
 import moment from "moment-timezone";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Link } from "react-router-dom";
 
 const DoctorAppointments = () => {
   const [appointments, setAppointments] = React.useState([]);
@@ -71,16 +73,35 @@ const DoctorAppointments = () => {
       ),
     },
     {
+      field: "paid",
+      headerName: "Paid",
+      width: 100,
+      minWidth: 50,
+      renderCell: (params) => (
+        <div className="flex justify-center items-center">
+          {params.row.paid ? <>✅</> : <>❌</>}
+        </div>
+      ),
+    },
+    {
       field: "actions",
       headerName: "Actions",
       width: 100,
       renderCell: (params) => (
-        <div className="flex justify-center">
-          {params.row.status !== 'canceled' && (
-            <Tooltip title="View" placement="right">
-              <VisibilityIcon
+        <div className="flex justify-center gap-3">
+          <Tooltip title="View" placement="left">
+            <Link
+              to={`/doctor-dashboard/appointments/${params.row.id}`}
+              className="hover:text-indigo-900 cursor-pointer"
+            >
+              <VisibilityIcon />
+            </Link>
+          </Tooltip>
+          {params.row.status !== "canceled" && (
+            <Tooltip title="Update Status" placement="right">
+              <EditIcon
                 className="hover:text-indigo-900 cursor-pointer"
-                onClick={() => handleViewDetails(params.row)}
+                onClick={() => handleViewAppointmentStatus(params.row)}
               />
             </Tooltip>
           )}
@@ -89,7 +110,7 @@ const DoctorAppointments = () => {
     },
   ];
 
-  const handleViewDetails = async (appointment) => {
+  const handleViewAppointmentStatus = async (appointment) => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_APP_API_BASE_URL}/appointments/${
@@ -150,14 +171,20 @@ const DoctorAppointments = () => {
       );
       if (status === "confirmed") {
         const notificationData = {
-          message: `Your appointment with Dr. ${selectedAppointment.doctor.user.first_name} ${selectedAppointment.doctor.user.last_name} on ${moment.utc(selectedAppointment.date_and_time).format("MMMM Do YYYY, h:mm:ss a")} has been confirmed!`,
+          message: `Your appointment with Dr. ${
+            selectedAppointment.doctor.user.first_name
+          } ${selectedAppointment.doctor.user.last_name} on ${moment
+            .utc(selectedAppointment.date_and_time)
+            .format("MMMM Do YYYY, h:mm:ss a")} has been confirmed!`,
           notification_type: "APPOINTMENT",
           patient: selectedAppointment.patient.id,
           related_appointment: selectedAppointment.id,
         };
 
         await axios.post(
-          `${import.meta.env.VITE_APP_API_BASE_URL}/notifications/patient-notifications/`,
+          `${
+            import.meta.env.VITE_APP_API_BASE_URL
+          }/notifications/patient-notifications/`,
           notificationData,
           {
             headers: {
@@ -168,14 +195,20 @@ const DoctorAppointments = () => {
       }
       if (status === "canceled") {
         const notificationData = {
-          message: `Your appointment with Dr. ${selectedAppointment.doctor.user.first_name} ${selectedAppointment.doctor.user.last_name} on ${moment.utc(selectedAppointment.date_and_time).format("MMMM Do YYYY, h:mm:ss a")} has been canceled!`,
+          message: `Your appointment with Dr. ${
+            selectedAppointment.doctor.user.first_name
+          } ${selectedAppointment.doctor.user.last_name} on ${moment
+            .utc(selectedAppointment.date_and_time)
+            .format("MMMM Do YYYY, h:mm:ss a")} has been canceled!`,
           notificaton_type: "APPOINTMENT",
           patient: selectedAppointment.patient.id,
           related_appointment: selectedAppointment.id,
         };
 
         await axios.post(
-          `${import.meta.env.VITE_APP_API_BASE_URL}/notifications/patient-notifications/`,
+          `${
+            import.meta.env.VITE_APP_API_BASE_URL
+          }/notifications/patient-notifications/`,
           notificationData,
           {
             headers: {
@@ -227,6 +260,7 @@ const DoctorAppointments = () => {
         consultationType: appointment.consultation_type,
         dateAndTime: appointment.date_and_time,
         status: appointment.status,
+        paid: appointment.paid,
       }))
     : [];
 
@@ -241,9 +275,14 @@ const DoctorAppointments = () => {
           pageSize={5}
           pageSizeOptions={[5, 10, 25, 100]}
           disableRowSelectionOnClick
+          initialState={{
+            sorting: {
+              sortModel: [{ field: "id", sort: "desc" }],
+            },
+          }}
         />
       </Box>
-      {(selectedAppointment && selectedAppointment.status !== 'canceled') && (
+      {selectedAppointment && selectedAppointment.status !== "canceled" && (
         <Dialog open={openModal} onClose={handleCloseModal}>
           <DialogTitle>Appointment Details</DialogTitle>
           <DialogContent>
@@ -255,57 +294,10 @@ const DoctorAppointments = () => {
               sx={{ mb: 2, mt: 2 }}
             />
             <TextField
-              label="Email"
-              value={selectedAppointment?.patient.user.email}
-              fullWidth
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Address"
-              value={selectedAppointment?.patient.user.address}
-              fullWidth
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Mobile Number"
-              value={selectedAppointment?.patient.user.mobile_number}
-              fullWidth
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Gender"
-              value={selectedAppointment?.patient.user.gender}
-              fullWidth
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Age"
-              value={selectedAppointment?.patient.user.age}
-              fullWidth
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Medical History"
-              value={selectedAppointment?.patient.medical_history}
-              fullWidth
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Prescriptions"
-              value={selectedAppointment?.patient.prescription}
-              fullWidth
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
               label="Date & Time"
-              value={moment.utc(selectedAppointment?.date_and_time).format("MMMM Do YYYY, h:mm:ss a")}
+              value={moment
+                .utc(selectedAppointment?.date_and_time)
+                .format("MMMM Do YYYY, h:mm:ss a")}
               fullWidth
               readOnly
               sx={{ mb: 2 }}
@@ -320,7 +312,7 @@ const DoctorAppointments = () => {
             <TextField
               select
               label="Status"
-              defaultValue={selectedAppointment?.status}
+              defaultValue={status || selectedAppointment?.status}
               fullWidth
               onChange={(e) => setStatus(e.target.value)}
               sx={{ mb: 2 }}
