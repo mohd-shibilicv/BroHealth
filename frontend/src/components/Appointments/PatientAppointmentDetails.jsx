@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import moment from "moment-timezone";
 import { Box, Button, CircularProgress, TextField } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
@@ -14,7 +14,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DigitalClock } from "@mui/x-date-pickers/DigitalClock";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 import dayjs from "dayjs";
+import QueryString from "query-string";
 
 const shouldDisableTime = (value, view) => {
   const hour = value.hour();
@@ -33,7 +36,20 @@ const PatientAppointmentDetails = () => {
   const [appointmentDetails, setAppointmentDetails] = useState([]);
   const [openCancelModal, setOpenCancelModal] = React.useState(false);
   const [openRescheduleModal, setOpenRescheduleModal] = React.useState(false);
+  const [openPaymentSuccessDialog, setOpenPaymentSuccessDialog] =
+    useState(false);
+  const [openPaymentCancelDialog, setOpenPaymentCancelDialog] = useState(false);
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const handlePaymentCloseSuccessDialog = () => {
+    setOpenPaymentSuccessDialog(false);
+    updateAppointmentPaymentStatus();
+  };
+
+  const handlePaymentCloseCancelDialog = () => {
+    setOpenPaymentCancelDialog(false);
+  };
 
   const handleClickOpenCancelModal = () => {
     setOpenCancelModal(true);
@@ -75,6 +91,41 @@ const PatientAppointmentDetails = () => {
     fetchAppointmentDetails();
   }, []);
 
+  React.useEffect(() => {
+    // Check to see if this is a redirect back from Checkout
+    const query = QueryString.parse(location.search);
+
+    if (query.success) {
+      setOpenPaymentSuccessDialog(true);
+    }
+
+    if (query.canceled) {
+      setOpenPaymentCancelDialog(true);
+    }
+  }, []);
+
+  const updateAppointmentPaymentStatus = async () => {
+    try {
+      await axios.put(
+        `${
+          import.meta.env.VITE_APP_API_BASE_URL
+        }/payments/${appointmentId}/update-payment-status/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setAppointmentDetails((prevDetails) => ({
+        ...prevDetails,
+        paid: true,
+      }));
+    } catch (error) {
+      console.error("Failed to update appointment payment status:", error);
+    }
+  };
+
   const handleCancelAppointment = async () => {
     try {
       const response = await axios.put(
@@ -114,7 +165,6 @@ const PatientAppointmentDetails = () => {
     }
 
     const formattedDateTime = `${selectedDate}T${selectedTime}:00Z`;
-    console.log(formattedDateTime);
     try {
       const response = await axios.put(
         `${
@@ -161,6 +211,12 @@ const PatientAppointmentDetails = () => {
                   <p className="text-sm text-gray-600">Appointment Type</p>
                   <p className="text-base font-medium text-navy-700">
                     {appointmentDetails.consultation_type}
+                  </p>
+                </div>
+                <div className="flex flex-col items-start justify-center rounded-2xl bg-white bg-clip-border px-3 py-4 shadow-3xl shadow-shadow-500">
+                  <p className="text-sm text-gray-600">Payment Status</p>
+                  <p className="text-base font-medium text-navy-700">
+                    {appointmentDetails.paid ? "Paid" : "Pending"}
                   </p>
                 </div>
                 <div className="flex flex-col justify-end rounded-2xl bg-white bg-clip-border px-3 py-4 shadow-3xl shadow-shadow-500">
@@ -244,17 +300,25 @@ const PatientAppointmentDetails = () => {
             </div>
           </div>
           {appointmentDetails.status !== "canceled" &&
-            appointmentDetails.status !== "completed" && (
-              <div className="mx-auto flex gap-2 justify-center max-w-2xl">
+            appointmentDetails.status !== "completed" &&
+            !appointmentDetails.paid && (
+              <form
+                action={`${
+                  import.meta.env.VITE_APP_API_BASE_URL
+                }/payments/stripe/create-checkout-session/?appointmentId=${
+                  appointmentDetails.id
+                }`}
+                method="POST"
+                className="mx-auto flex gap-2 justify-center max-w-2xl"
+              >
                 <Button
                   fullWidth
                   type="submit"
-                  variant="outlined"
-                  onClick={handleClickOpenCancelModal}
-                  color="error"
+                  variant="contained"
+                  color="primary"
                   sx={{
                     mt: 3,
-                    mb: 2,
+                    mb: 1,
                   }}
                 >
                   {loading ? (
@@ -266,9 +330,39 @@ const PatientAppointmentDetails = () => {
                       <span className="sr-only">Loading...</span>
                     </div>
                   ) : (
-                    <p>Cancel Appointment</p>
+                    <p>Pay for the Appointment Now</p>
                   )}
                 </Button>
+              </form>
+            )}
+          {appointmentDetails.status !== "canceled" &&
+            appointmentDetails.status !== "completed" && (
+              <div className="mx-auto flex gap-2 justify-center max-w-2xl">
+                {!appointmentDetails.paid && (
+                  <Button
+                    fullWidth
+                    type="submit"
+                    variant="outlined"
+                    onClick={handleClickOpenCancelModal}
+                    color="error"
+                    sx={{
+                      mt: 3,
+                      mb: 2,
+                    }}
+                  >
+                    {loading ? (
+                      <div
+                        className="animate-spin inline-block w-6 h-6 border-[3px] border-current border-t-transparent text-yellow-1000 rounded-full"
+                        role="status"
+                        aria-label="loading"
+                      >
+                        <span className="sr-only">Loading...</span>
+                      </div>
+                    ) : (
+                      <p>Cancel Appointment</p>
+                    )}
+                  </Button>
+                )}
                 <Button
                   fullWidth
                   type="submit"
@@ -363,6 +457,71 @@ const PatientAppointmentDetails = () => {
                 autoFocus
               >
                 Confirm
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* Success Dialog */}
+          <Dialog
+            open={openPaymentSuccessDialog}
+            onClose={handlePaymentCloseSuccessDialog}
+            aria-labelledby="success-dialog-title"
+            aria-describedby="success-dialog-description"
+            className="rounded-xl"
+          >
+            <DialogTitle
+              className="mx-auto flex flex-col items-center justify-center"
+              id="success-dialog-title"
+            >
+              <div>
+                <CheckCircleIcon sx={{ width: 100, height: 100 }} />
+              </div>
+              Appointment Payment Success
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="success-dialog-description">
+                Your appointment payment was successful.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={handlePaymentCloseSuccessDialog}
+                color="inherit"
+                autoFocus
+              >
+                OK
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* Cancel Dialog */}
+          <Dialog
+            open={openPaymentCancelDialog}
+            onClose={handlePaymentCloseCancelDialog}
+            aria-labelledby="cancel-dialog-title"
+            aria-describedby="cancel-dialog-description"
+          >
+            <DialogTitle
+              className="mx-auto flex flex-col items-center justify-center"
+              id="success-dialog-title"
+            >
+              <div>
+                <ClearOutlinedIcon sx={{ width: 100, height: 100 }} />
+              </div>
+              Appointment Payment Canceled
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="cancel-dialog-description">
+                Your appointment payment was canceled.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={handlePaymentCloseCancelDialog}
+                color="inherit"
+                autoFocus
+              >
+                Close
               </Button>
             </DialogActions>
           </Dialog>

@@ -20,7 +20,6 @@ class DoctorSerializer(serializers.ModelSerializer):
             'id',
             'user',
             'specialization',
-            'consultation_fee',
             'years_of_experience',
             'education',
             'clinic_address',

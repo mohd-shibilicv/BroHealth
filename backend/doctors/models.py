@@ -5,7 +5,6 @@ from django.conf import settings
 class Doctor(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     specialization = models.CharField(max_length=100, blank=True)
-    consultation_fee = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     years_of_experience = models.IntegerField(blank=True, null=True)
     education = models.TextField(blank=True)
     clinic_address = models.TextField(blank=True)

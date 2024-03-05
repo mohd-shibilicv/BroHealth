@@ -7,6 +7,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
+from appointments.models import Appointment
+
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -24,6 +26,7 @@ def test_payment(request):
 
 class StripeCheckoutView(APIView):
     def post(self, request):
+        appointment_id = request.GET.get('appointmentId', None)
         try:
             checkout_session = stripe.checkout.Session.create(
                 line_items=[
@@ -37,13 +40,25 @@ class StripeCheckoutView(APIView):
                 ],
                 mode="payment",
                 success_url=settings.SITE_URL
-                + "/?success=true&session_id={CHECKOUT_SESSION_ID}",
-                cancel_url=settings.SITE_URL + "/?canceled=true",
+                + f"/dashboard/appointments/{appointment_id}/?success=true&session_id={{CHECKOUT_SESSION_ID}}",
+                cancel_url=settings.SITE_URL + f"/dashboard/appointments/{appointment_id}/?canceled=true",
             )
+            print(checkout_session)
             return redirect(checkout_session.url)
 
-        except:
+        except Exception as e:
             return Response(
-                {'error': 'Something went wrong when creating stripe checkout session'},
+                {'error': 'Something went wrong when creating stripe checkout session', 'details': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
+class UpdateAppointmentPaymentStatusView(APIView):
+    def put(self, request, appointment_id):
+        try:
+            appointment = Appointment.objects.get(id=appointment_id)
+            appointment.paid = True
+            appointment.save()
+            return Response({'status': 'success'}, status=status.HTTP_200_OK)
+        except Appointment.DoesNotExist:
+            return Response({'error': 'Appointment not found'}, status=status.HTTP_404_NOT_FOUND)

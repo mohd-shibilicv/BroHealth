@@ -4,15 +4,10 @@ import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { Tooltip } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 import moment from "moment-timezone";
 import ErrorBoundary from "../../layouts/ErrorBoundary";
 import { Link } from "react-router-dom";
-
-const handleViewDetails = (appointmentId) => {
-  // Add your logic to navigate to the details page or open a modal
-  console.log(`View details for appointment with ID: ${appointmentId}`);
-};
 
 const columns = [
   { field: "id", headerName: "ID", width: 150 },
@@ -40,8 +35,8 @@ const columns = [
   {
     field: "status",
     headerName: "Status",
-    width: 200,
-    minWidth: 200,
+    width: 150,
+    minWidth: 150,
     renderCell: (params) => (
       <div className="flex justify-center items-center">
         {params.row.status === "pending" ? (
@@ -54,6 +49,23 @@ const columns = [
           </p>
         ) : (
           <p className="p-2 rounded-lg bg-red-100 text-red-800">Canceled</p>
+        )}
+      </div>
+    ),
+  },
+  {
+    field: "paid",
+    headerName: "Paid",
+    width: 100,
+    minWidth: 50,
+    renderCell: (params) => (
+      <div className="flex justify-center items-center">
+        {params.row.paid ? (
+          <>✅</>
+        ) : (
+          <>
+            ❌
+          </>
         )}
       </div>
     ),
@@ -109,6 +121,7 @@ const PatientAppointments = () => {
         consultationType: appointment.consultation_type,
         dateAndTime: appointment.date_and_time,
         status: appointment.status,
+        paid: appointment.paid,
       }))
     : [];
 

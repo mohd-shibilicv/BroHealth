@@ -18,6 +18,8 @@ import About from "./About";
 import Contact from "./Contact";
 import DoctorDetailsPage from "./DoctorDetailsPage";
 import AppointmentPage from "./AppointmentPage";
+import SuccessfulPayment from "./SuccessfulPayment";
+import CanceledPayment from "./CanceledPayment";
 
 const GeneralViewPage = () => {
   return (
@@ -52,6 +54,8 @@ const GeneralViewPage = () => {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ForgotPasswordReset />} />
           <Route path="/activate" element={<ActivationPage />} />
+          <Route path="/successful-payment" element={<SuccessfulPayment />} />
+          <Route path="/canceled-payment" element={<CanceledPayment />} />
           <Route path="*" element={<Error404Page />} />
         </Routes>
         <Footer />

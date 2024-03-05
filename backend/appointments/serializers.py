@@ -25,6 +25,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
             'consultation_type',
             'date_and_time',
             'status',
+            'paid',
             'additional_notes',
             'created_at'
         ]
