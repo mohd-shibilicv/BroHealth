@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useCallback, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import moment from "moment-timezone";
 import {
   CircularProgress,
@@ -20,6 +20,8 @@ const DoctorAppointmentDetails = () => {
   const { appointmentId } = useParams();
   const token = useSelector((state) => state.auth.token);
   const [appointment, setAppointment] = useState([]);
+  const [roomCode, setRoomCode] = useState("");
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     const fetchAppointmentDetails = async () => {
@@ -42,6 +44,10 @@ const DoctorAppointmentDetails = () => {
 
     fetchAppointmentDetails();
   }, []);
+
+  const handleJoinRoom = useCallback(() => {
+    navigate(`/doctor-dashboard/chat/${roomCode}`);
+  }, [navigate, roomCode]);
 
   return (
     <>
@@ -174,10 +180,21 @@ const DoctorAppointmentDetails = () => {
             </Grid>
             {appointment.paid && (
               <Grid item xs={12}>
+                <Grid item xs={12}>
+                  <TextField
+                    label="Enter Room Code"
+                    type="text"
+                    value={roomCode}
+                    onChange={(e) => setRoomCode(e.target.value)}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  />
+                </Grid>
                 <Button
                   fullWidth
                   color="inherit"
                   variant="outlined"
+                  onClick={handleJoinRoom}
                   sx={{
                     color: "black",
                     backgroundColor: "rgb(17  24  39 /  0)",

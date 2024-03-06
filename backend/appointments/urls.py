@@ -5,6 +5,7 @@ from appointments.views import (
     AppointmentDetailView,
     AppointmentCancelView,
     AppointmentRescheduleView,
+    GenerateRoomAccessToken
 )
 
 
@@ -20,4 +21,5 @@ urlpatterns = [
         AppointmentRescheduleView.as_view(),
         name="appointment-reschedule",
     ),
+    path('room_access_token', GenerateRoomAccessToken.as_view(), name='room-access-token')
 ]
