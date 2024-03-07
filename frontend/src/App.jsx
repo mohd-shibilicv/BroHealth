@@ -12,6 +12,7 @@ import ProtectedDoctorRoutes from "./routes/ProtectedDoctorRoutes";
 import DoctorDashboardView from "./pages/DoctorDashboardView";
 import ProtectedAdminRoutes from "./routes/ProtectedAdminRoutes";
 import AdminDashboardView from "./pages/AdminDashboardView";
+import VideoSessionPage from "./pages/VideoSessionPage";
 
 function App() {
   const location = useLocation();
@@ -20,6 +21,7 @@ function App() {
     <>
       <div className="App">
         <Routes>
+          <Route path="consultation/:roomId" element={<VideoSessionPage />} />
           <Route path="/*" element={<GeneralViewPage />} />
           <Route
             path="/dashboard/*"
