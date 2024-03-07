@@ -46,7 +46,8 @@ const DoctorAppointmentDetails = () => {
 
   const handleJoinRoom = useCallback(() => {
     const roomCode = `${appointment?.doctor.user.first_name}-${appointment?.patient.user.last_name}`;
-    navigate(`/consultation/${roomCode}?appointmentId=${appointmentId}`);
+    const url = `${window.location.origin}/consultation/${roomCode}?appointmentId=${appointmentId}`;
+    window.open(url, "_blank");
   }, [navigate, appointment]);
 
   return (
@@ -166,16 +167,12 @@ const DoctorAppointmentDetails = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                select
                 label="Status"
-                defaultValue={appointment?.status}
+                value={appointment?.status}
                 fullWidth
-                onChange={(e) => setStatus(e.target.value)}
+                readOnly
                 sx={{ mb: 2 }}
               >
-                <MenuItem value="confirmed">Confirmed</MenuItem>
-                <MenuItem value="canceled">Cancelled</MenuItem>
-                <MenuItem value="pending">Pending</MenuItem>
               </TextField>
             </Grid>
             {appointment.paid && appointment.status === "confirmed" && (
