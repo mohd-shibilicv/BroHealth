@@ -3,6 +3,8 @@ import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { ZegoSuperBoardManager } from "zego-superboard-web";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { Box, CircularProgress } from "@mui/material";
 
 function randomID(len) {
   let result = "";
@@ -18,13 +20,37 @@ function randomID(len) {
 }
 
 export default function VideoChatSessionIntro() {
+  const [appointment, setAppointment] = useState([]);
   const { roomId } = useParams();
   const location = useLocation();
-  const appointment = location.state?.appointment;
+  const searchParams = new URLSearchParams(location.search);
+  const appointmentId = searchParams.get("appointmentId");
+  const token = useSelector((state) => state.auth.token);
   const account = useSelector((state) => state.auth.account);
+  const isDoctor = account?.role === "doctor";
   const navigate = useNavigate();
-  const userID = `${appointment.doctor.id}`;
-  const userName = `${appointment.doctor.user.first_name} ${appointment.doctor.user.last_name}`;
+
+  React.useEffect(() => {
+    const fetchAppointmentDetails = async () => {
+      try {
+        const response = await axios.get(
+          `${
+            import.meta.env.VITE_APP_API_BASE_URL
+          }/appointments/${appointmentId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setAppointment(response.data);
+      } catch (error) {
+        console.error("Failed to fetch appointments:", error);
+      }
+    };
+
+    fetchAppointmentDetails();
+  }, [setAppointment]);
 
   const handleLeaveRoom = () => {
     navigate(`/`);
@@ -33,6 +59,8 @@ export default function VideoChatSessionIntro() {
   const doctorMeeting = async (element) => {
     const appID = import.meta.env.VITE_APP_ZEGOCLOUD_APP_ID;
     const serverSecret = `${import.meta.env.VITE_APP_ZEGOCLOUD_SERVER_SECRET}`;
+    const userID = `${account.id}`;
+    const userName = `${account.first_name} ${account.last_name}`;
     const youServerUrl = `${
       import.meta.env.VITE_APP_API_BASE_URL
     }/appointments/room_access_token`;
@@ -63,8 +91,8 @@ export default function VideoChatSessionIntro() {
               url:
                 window.location.origin +
                 window.location.pathname +
-                "?roomId=" +
-                roomId,
+                "?appointmentId=" +
+                appointmentId,
             },
           ],
           scenario: {
@@ -74,15 +102,6 @@ export default function VideoChatSessionIntro() {
             resolution: ZegoUIKitPrebuilt.ScreenSharingResolution_720P,
           },
           maxUsers: 2,
-          onUserAvatarSetter: (userList) => {
-            userList.forEach((user) => {
-              user.setUserAvatar(
-                `${import.meta.env.VITE_APP_API_BASE_URL}${
-                  account.profile_picture
-                }`
-              );
-            });
-          },
           videoResolutionList: [
             ZegoUIKitPrebuilt.VideoResolution_360P,
             ZegoUIKitPrebuilt.VideoResolution_180P,
@@ -98,7 +117,7 @@ export default function VideoChatSessionIntro() {
           },
           showRoomTimer: true,
           showLeavingView: false,
-          onLeaveRoom: (handleLeaveRoom),
+          onLeaveRoom: handleLeaveRoom,
         });
         zp.addPlugins({ ZegoSuperBoardManager });
       })
@@ -108,10 +127,20 @@ export default function VideoChatSessionIntro() {
   };
 
   return (
-    <div
-      className="myCallContainer"
-      ref={doctorMeeting}
-      style={{ width: "100%", height: "100%" }}
-    ></div>
+    <>
+      {!appointment.doctor ? (
+        <div className="relative flex min-h-[500px] justify-center items-center">
+          <Box sx={{ display: "flex" }}>
+            <CircularProgress color="inherit" />
+          </Box>
+        </div>
+      ) : (
+        <div
+          className="myCallContainer"
+          ref={doctorMeeting}
+          style={{ width: "100%", height: "100%" }}
+        ></div>
+      )}
+    </>
   );
 }

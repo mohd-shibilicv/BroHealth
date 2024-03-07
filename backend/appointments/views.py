@@ -95,11 +95,8 @@ class GenerateRoomAccessToken(View):
     def get(self, request, *args, **kwargs):
         # Extract parameters from the request
         app_id = int(request.GET.get('appID'))
-        print(app_id)
         server_secret = request.GET.get('serverSecret')
-        print(server_secret)
         user_id = request.GET.get('userID')
-        print(user_id)
 
         # Token expiration time, in seconds
         effective_time_in_seconds = 128000
@@ -118,7 +115,6 @@ class GenerateRoomAccessToken(View):
             "error_code": token_info.error_code,
             "message": token_info.error_message
         }
-        print(response_data)
 
         # Return the response
         return JsonResponse(response_data)

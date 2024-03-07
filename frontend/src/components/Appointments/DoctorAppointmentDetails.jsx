@@ -46,7 +46,7 @@ const DoctorAppointmentDetails = () => {
 
   const handleJoinRoom = useCallback(() => {
     const roomCode = `${appointment?.doctor.user.first_name}-${appointment?.patient.user.last_name}`;
-    navigate(`/consultation/${roomCode}`, { state: { appointment } });
+    navigate(`/consultation/${roomCode}?appointmentId=${appointmentId}`);
   }, [navigate, appointment]);
 
   return (
