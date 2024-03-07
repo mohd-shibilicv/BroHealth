@@ -8,6 +8,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from django.views import View
+from django.conf import settings
+from django.template.loader import render_to_string
+from rest_framework.decorators import api_view
+from django.core.mail import EmailMultiAlternatives
 
 from accounts.permissions import IsPatient
 from patients.models import Patient
@@ -118,3 +122,46 @@ class GenerateRoomAccessToken(View):
 
         # Return the response
         return JsonResponse(response_data)
+
+
+@api_view(['POST'])
+def send_session_email(request):
+    patient_id = request.data.get('patient_id')
+    doctor_id = request.data.get('doctor_id')
+    room_url = request.data.get('room_url')
+
+    doctor = get_object_or_404(Doctor, pk=doctor_id)
+    patient = get_object_or_404(Patient, pk=patient_id)
+
+    # Construct the email message
+    subject = 'Your appointment is starting'
+    from_email = settings.EMAIL_HOST_USER
+
+    # Prepare plain text version of the email
+    text_content = f'Hello, your appointment with Dr. {doctor.user.first_name} {doctor.user.last_name} is starting. Click the link to join: {room_url}'
+
+    # Prepare HTML version of the email
+    html_content = render_to_string('session_email_template.html', {
+        'patient': patient,
+        'doctor': doctor,
+        'room_url': room_url,
+    })
+
+    # Create the email message
+    message = EmailMultiAlternatives(
+        subject,
+        text_content,
+        from_email,
+        [patient.user.email]
+    )
+
+    # Attach the HTML version to the email
+    message.content_subtype = "html"
+    message.attach_alternative(html_content, "text/html")
+
+    # Send the email
+    try:
+        message.send()
+        return JsonResponse({'status': 'success', 'message': 'Email sent successfully'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})

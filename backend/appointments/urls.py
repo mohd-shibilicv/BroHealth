@@ -5,7 +5,8 @@ from appointments.views import (
     AppointmentDetailView,
     AppointmentCancelView,
     AppointmentRescheduleView,
-    GenerateRoomAccessToken
+    GenerateRoomAccessToken,
+    send_session_email
 )
 
 
@@ -21,5 +22,6 @@ urlpatterns = [
         AppointmentRescheduleView.as_view(),
         name="appointment-reschedule",
     ),
-    path('room_access_token', GenerateRoomAccessToken.as_view(), name='room-access-token')
+    path('room_access_token', GenerateRoomAccessToken.as_view(), name='room-access-token'),
+    path('send_session_email', send_session_email, name='send-session-email'),
 ]

@@ -136,9 +136,8 @@ export default function VideoChatSessionIntro() {
         </div>
       ) : (
         <div
-          className="myCallContainer"
+          className="myCallContainer flex justify-center items-center mx-auto min-h-screen w-full"
           ref={doctorMeeting}
-          style={{ width: "100%", height: "100%" }}
         ></div>
       )}
     </>

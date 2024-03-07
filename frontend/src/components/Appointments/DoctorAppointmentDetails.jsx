@@ -44,10 +44,36 @@ const DoctorAppointmentDetails = () => {
     fetchAppointmentDetails();
   }, [setAppointment]);
 
-  const handleJoinRoom = useCallback(() => {
+  const handleJoinRoom = useCallback(async () => {
     const roomCode = `${appointment?.doctor.user.first_name}-${appointment?.patient.user.last_name}`;
     const url = `${window.location.origin}/consultation/${roomCode}?appointmentId=${appointmentId}`;
     window.open(url, "_blank");
+    // Define the email payload
+    const emailPayload = {
+      patient_id: appointment?.patient.id,
+      doctor_id: appointment?.doctor.id,
+      room_url: url,
+    };
+
+    try {
+      // Send the email
+      await axios.post(
+        `${
+          import.meta.env.VITE_APP_API_BASE_URL
+        }/appointments/send_session_email`,
+        emailPayload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Open the session in a new tab
+      window.open(url, "_blank");
+    } catch (error) {
+      console.error("Failed to send email:", error);
+    }
   }, [navigate, appointment]);
 
   return (
@@ -172,8 +198,7 @@ const DoctorAppointmentDetails = () => {
                 fullWidth
                 readOnly
                 sx={{ mb: 2 }}
-              >
-              </TextField>
+              ></TextField>
             </Grid>
             {appointment.paid && appointment.status === "confirmed" && (
               <Grid item xs={12}>
