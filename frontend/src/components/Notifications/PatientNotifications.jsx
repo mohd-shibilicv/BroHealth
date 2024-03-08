@@ -330,12 +330,11 @@ const PatientNotifications = () => {
             />
           </ListItemButton>
           <Divider />
-          <ListItemButton>
             <ListItemText
+            className="m-5"
               primary="Message"
               secondary={selectedNotification?.message}
             />
-          </ListItemButton>
           <Divider />
           <ListItemButton>
             <ListItemText

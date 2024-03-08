@@ -12,6 +12,7 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from rest_framework.decorators import api_view
 from django.core.mail import EmailMultiAlternatives
+from django.db import transaction
 
 from accounts.permissions import IsPatient
 from patients.models import Patient
@@ -19,6 +20,8 @@ from doctors.models import Doctor
 from appointments.models import Appointment
 from appointments.serializers import AppointmentSerializer
 from appointments.token04 import generate_token04
+from notifications.models import PatientNotification
+from appointments.tasks import send_session_email_task
 
 
 class AppointmentListCreateView(generics.ListCreateAPIView):
@@ -124,12 +127,15 @@ class GenerateRoomAccessToken(View):
         return JsonResponse(response_data)
 
 
+@transaction.atomic
 @api_view(['POST'])
 def send_session_email(request):
+    appointment_id = request.data.get('appointment_id')
     patient_id = request.data.get('patient_id')
     doctor_id = request.data.get('doctor_id')
     room_url = request.data.get('room_url')
 
+    appointment = get_object_or_404(Appointment, pk=appointment_id)
     doctor = get_object_or_404(Doctor, pk=doctor_id)
     patient = get_object_or_404(Patient, pk=patient_id)
 
@@ -138,30 +144,43 @@ def send_session_email(request):
     from_email = settings.EMAIL_HOST_USER
 
     # Prepare plain text version of the email
-    text_content = f'Hello, your appointment with Dr. {doctor.user.first_name} {doctor.user.last_name} is starting. Click the link to join: {room_url}'
+    text_content = f'Hello, your appointment with Dr. {doctor.user.first_name} {doctor.user.last_name} is starting. Click or open the following link to join: {room_url}'
 
     # Prepare HTML version of the email
     html_content = render_to_string('session_email_template.html', {
+        'appointment': appointment,
         'patient': patient,
         'doctor': doctor,
         'room_url': room_url,
     })
 
-    # Create the email message
-    message = EmailMultiAlternatives(
+    # Check if a notification already exists for this appointment
+    existing_notification = PatientNotification.objects.filter(
+        patient=patient,
+        related_appointment=appointment
+    ).first()
+
+    if existing_notification:
+        # If a notification already exists, return a message
+        return JsonResponse({
+            'status': 'info',
+            'message': 'A notification for this appointment already exists'
+        })
+
+    PatientNotification.objects.create(
+        patient=patient,
+        message=text_content,
+        related_appointment=appointment,
+        notification_type=PatientNotification.WARNING
+    )
+
+    # Send the email asynchronously using Celery
+    send_session_email_task.delay(
         subject,
         text_content,
+        html_content,
         from_email,
         [patient.user.email]
     )
 
-    # Attach the HTML version to the email
-    message.content_subtype = "html"
-    message.attach_alternative(html_content, "text/html")
-
-    # Send the email
-    try:
-        message.send()
-        return JsonResponse({'status': 'success', 'message': 'Email sent successfully'})
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'success', 'message': 'Email scheduled for sending'})

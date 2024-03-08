@@ -50,6 +50,7 @@ const DoctorAppointmentDetails = () => {
     window.open(url, "_blank");
     // Define the email payload
     const emailPayload = {
+      appointment_id: appointment?.id,
       patient_id: appointment?.patient.id,
       doctor_id: appointment?.doctor.id,
       room_url: url,
@@ -68,9 +69,6 @@ const DoctorAppointmentDetails = () => {
           },
         }
       );
-
-      // Open the session in a new tab
-      window.open(url, "_blank");
     } catch (error) {
       console.error("Failed to send email:", error);
     }
