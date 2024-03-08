@@ -12,7 +12,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CircularProgress from "@mui/material/CircularProgress";
-import DeleteIcon from "@mui/icons-material/Delete";
+import CloseIcon from "@mui/icons-material/Close";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -227,7 +227,7 @@ export default function AccountVerifications() {
                                 </Tooltip>
                               </Link>
                               <Tooltip title="delete" placement="top">
-                                <DeleteIcon
+                                <CloseIcon
                                   className="hover:text-red-600 cursor-pointer"
                                   onClick={() =>
                                     deleteVerificationRecord(

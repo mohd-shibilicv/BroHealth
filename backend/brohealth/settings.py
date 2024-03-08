@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import timedelta
+from celery.schedules import crontab
 
 load_dotenv()
 
@@ -150,7 +151,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -207,14 +208,14 @@ CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
 CELERY_ACCEPT_CONTENT = {'application/json'}
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
+CELERY_TIMEZONE = 'Asia/Kolkata'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
 
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
-# CELERY_BEAT_SCHEDULE = {
-#     'send_appointment_reminders': {
-#         'task': 'appointments.tasks.send_appointment_reminder_emails',
-#         'schedule': timedelta(minutes=1),
-#     },
-# }
+CELERY_BEAT_SCHEDULE = {
+    'send_appointment_reminder_emails': {
+        'task': 'appointments.tasks.send_appointment_reminder_emails',
+        'schedule': crontab(minute='*/1'),
+    },
+}

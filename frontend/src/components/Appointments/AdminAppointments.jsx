@@ -7,11 +7,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { CircularProgress, Tooltip } from "@mui/material";
 import moment from "moment-timezone";
-
-const handleViewDetails = (appointmentId) => {
-  // Add your logic to navigate to the details page or open a modal
-  console.log(`View details for appointment with ID: ${appointmentId}`);
-};
+import { Link } from "react-router-dom";
 
 const columns = [
   { field: "id", headerName: "ID", width: 150 },
@@ -64,17 +60,13 @@ const columns = [
     width: 100,
     renderCell: (params) => (
       <div className="flex justify-center gap-2">
-        <Tooltip title="view" placement="right">
-          <VisibilityIcon
+        <Tooltip title="View" placement="left">
+          <Link
+            to={`/admin/appointments/${params.row.id}`}
             className="hover:text-indigo-900 cursor-pointer"
-            onClick={() => handleViewDetails(params.row.id)}
-          />
-        </Tooltip>
-        <Tooltip title="delete" placement="right">
-          <DeleteIcon
-            className="hover:text-red-700 cursor-pointer"
-            onClick={() => handleViewDetails(params.row.id)}
-          />
+          >
+            <VisibilityIcon />
+          </Link>
         </Tooltip>
       </div>
     ),
@@ -96,7 +88,6 @@ const AdminAppointments = () => {
             },
           }
         );
-        console.log(response.data);
         setAppointments(response.data.results);
       } catch (error) {
         console.error("Failed to fetch appointments:", error);

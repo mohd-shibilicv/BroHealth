@@ -13,6 +13,7 @@ import Patients from './Admin/Dashboard/Patients'
 import ChatSection from './Admin/Dashboard/ChatSection'
 import AccountVerifications from './Admin/Dashboard/AccountVerifications'
 import VerificationDetails from './Admin/Dashboard/VerificationDetails'
+import AdminAppointmentDetails from '../components/Appointments/AdminAppointmentDetails'
 
 
 const AdminDashboardView = () => {
@@ -22,6 +23,7 @@ const AdminDashboardView = () => {
             <Routes>
                 <Route path="/" element={<DashboardPage />} />
                 <Route path="/appointments" element={<Appointments />} />
+                <Route path="/appointments/:appointmentId" element={<AdminAppointmentDetails />} />
                 <Route path="/patients" element={<Patients />} />
                 <Route path="/doctors" element={<Doctors />} />
                 <Route path="/payments" element={<Payments />} />

@@ -25,6 +25,7 @@ class Appointment(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     additional_notes = models.TextField(blank=True)
     paid = models.BooleanField(default=False)
+    reminder_sent_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
