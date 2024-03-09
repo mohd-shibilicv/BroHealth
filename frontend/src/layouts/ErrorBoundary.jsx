@@ -17,7 +17,11 @@ const ErrorBoundary = ({ children }) => {
   }, []);
 
   if (hasError) {
-    return <h1>Something went wrong. Please try again later.</h1>;
+    return (
+      <div className="h-full w-full mx-auto flex justify-center items-center">
+        <h1 className="text-3xl font-medium">Something went wrong. Please try again later.</h1>;
+      </div>
+    )
   }
 
   return <>{children}</>;
