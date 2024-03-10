@@ -17,8 +17,8 @@ from django.db import transaction
 from accounts.permissions import IsPatient
 from patients.models import Patient
 from doctors.models import Doctor
-from appointments.models import Appointment
-from appointments.serializers import AppointmentSerializer
+from appointments.models import Appointment, AppointmentRoom, AppointmentChat
+from appointments.serializers import AppointmentSerializer, AppointmentRoomSerializer, AppointmentChatSerializer
 from appointments.token04 import generate_token04
 from notifications.models import PatientNotification
 from appointments.tasks import send_session_email_task
@@ -184,3 +184,15 @@ def send_session_email(request):
     )
 
     return JsonResponse({'status': 'success', 'message': 'Email scheduled for sending'})
+
+
+class AppointmentRoomList(generics.ListCreateAPIView):
+    queryset = AppointmentRoom.objects.all()
+    serializer_class = AppointmentRoomSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class PatientNotificationDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = PatientNotification.objects.all()
+    serializer_class = AppointmentChatSerializer
+    permission_classes = [IsAuthenticated]

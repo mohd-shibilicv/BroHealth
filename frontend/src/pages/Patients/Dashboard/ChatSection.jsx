@@ -6,29 +6,53 @@ import { MessageRight } from "../../../components/Chats/MessageRight";
 import TextField from "@mui/material/TextField";
 import SendIcon from "@mui/icons-material/Send";
 import Button from "@mui/material/Button";
-
-const client = new W3CWebSocket("ws://localhost:8000/ws/chat/room1/");
+import { useSelector } from "react-redux";
 
 function ChatSection() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const token = useSelector((state) => state.auth.token);
+  const [client, setClient] = useState(null);
 
   useEffect(() => {
-    client.onopen = () => {
+    const roomId = 1;
+    const newClient = new W3CWebSocket(
+      `${
+        import.meta.env.VITE_APP_API_WEB_SOCKET_BASE_URL
+      }/ws/chat/${roomId}/?token=${token}`
+    );
+
+    newClient.onopen = () => {
       console.log("WebSocket Client Connected");
     };
-    client.onmessage = (message) => {
-      setMessages((messages) => [...messages, message.data]);
+    newClient.onclose = () => {
+      console.log("WebSocket Client Closed");
+    };
+    newClient.onerror = (error) => {
+      console.log("WebSocket Client Error:", error);
+    };
+    newClient.onmessage = (message) => {
+      const parsedMessage = JSON.parse(message.data);
+      setMessages((prevMessages) => [...prevMessages, parsedMessage.message]);
+    };
+
+    setClient(newClient);
+
+    return () => {
+      newClient.close();
     };
   }, []);
 
-  const sendMessage = () => {
-    client.send(
-      JSON.stringify({
-        message: message,
-      })
-    );
-    setMessage("");
+  const sendMessage = (e) => {
+    e.preventDefault();
+    if (client) {
+      client.send(
+        JSON.stringify({
+          message: message,
+        })
+      );
+      setMessage("");
+    }
   };
 
   return (
@@ -42,69 +66,74 @@ function ChatSection() {
       }}
     >
       <Paper
+        id="style-1"
         sx={{
-          width: "100%",
-          maxWidth: "100%",
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "column",
-          position: "relative",
-          zIndex: 2,
+          width: "calc( 100% - 20px )",
+          margin: 2,
+          overflowY: "auto",
+          height: "500px",
         }}
       >
-        <Paper
-          id="style-1"
-          sx={{
-            width: "calc( 100% - 20px )",
-            margin: 10,
-            overflowY: "scroll",
-            height: "calc( 100% - 80px )",
-          }}
-        >
-          <MessageLeft
-            message="あめんぼあかいなあいうえお"
-            timestamp="MM/DD 00:00"
-            photoURL="https://lh3.googleusercontent.com/a-/AOh14Gi4vkKYlfrbJ0QLJTg_DLjcYyyK7fYoWRpz2r4s=s96-c"
-            displayName=""
-            avatarDisp={true}
-          />
-          <MessageLeft
-            message="xxxxxhttps://yahoo.co.jp xxxxxxxxxあめんぼあかいなあいうえおあいうえおかきくけこさぼあかいなあいうえおあいうえおかきくけこさぼあかいなあいうえおあいうえおかきくけこさいすせそ"
-            timestamp="MM/DD 00:00"
-            photoURL=""
-            displayName="テスト"
-            avatarDisp={false}
-          />
-          <MessageRight
-            message="messageRあめんぼあかいなあいうえおあめんぼあかいなあいうえおあめんぼあかいなあいうえお"
-            timestamp="MM/DD 00:00"
-            photoURL="https://lh3.googleusercontent.com/a-/AOh14Gi4vkKYlfrbJ0QLJTg_DLjcYyyK7fYoWRpz2r4s=s96-c"
-            displayName="まさりぶ"
-            avatarDisp={true}
-          />
-          <MessageRight
-            message="messageRあめんぼあかいなあいうえおあめんぼあかいなあいうえお"
-            timestamp="MM/DD 00:00"
-            photoURL="https://lh3.googleusercontent.com/a-/AOh14Gi4vkKYlfrbJ0QLJTg_DLjcYyyK7fYoWRpz2r4s=s96-c"
-            displayName="まさりぶ"
-            avatarDisp={false}
-          />
-        </Paper>
-        <form onSubmit={sendMessage} className="w-full flex" noValidate autoComplete="off">
-          <TextField
-            id="standard-text"
-            label="Send a message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            sx={{
-              width: "100%",
-            }}
-          />
-          <Button type="submit" variant="contained" color="primary" sx={{ marginLeft: 1 }}>
+        {messages.length === 0 && (
+          <div>
+            <p>BroHealth</p>
+          </div>
+        )}
+        {messages.map((msg, index) => (
+          <div key={index}>
+            {msg.sender === "patient" ? (
+              <MessageRight
+                message={msg.content}
+                timestamp="MM/DD 00:00"
+                displayName="Patient's Name"
+                avatarDisp={true}
+              />
+            ) : (
+              <MessageLeft
+                message={msg.content}
+                timestamp="MM/DD 00:00"
+                displayName="Doctor's Name"
+                avatarDisp={true}
+              />
+            )}
+          </div>
+        ))}
+      </Paper>
+      <form
+        onSubmit={sendMessage}
+        className="w-full flex gap-2"
+        noValidate
+        autoComplete="off"
+      >
+        <input
+          aria-multiline
+          id="standard-text"
+          placeholder="Send a message"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          className="w-full border border-black outline-none px-2 py-3 rounded-lg placeholder:text-gray-700"
+        />
+        {message ? (
+          <Button
+            type="submit"
+            variant="outlined"
+            color="inherit"
+            sx={{ marginLeft: 1 }}
+          >
             <SendIcon />
           </Button>
-        </form>
-      </Paper>
+        ) : (
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled
+            sx={{ marginLeft: 1 }}
+          >
+            <SendIcon />
+          </Button>
+        )}
+      </form>
     </div>
   );
 }

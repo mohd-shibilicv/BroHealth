@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from appointments.models import Appointment
+from appointments.models import Appointment, AppointmentRoom
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -43,7 +43,6 @@ class StripeCheckoutView(APIView):
                 + f"/dashboard/appointments/{appointment_id}/?success=true&session_id={{CHECKOUT_SESSION_ID}}",
                 cancel_url=settings.SITE_URL + f"/dashboard/appointments/{appointment_id}/?canceled=true",
             )
-            print(checkout_session)
             return redirect(checkout_session.url)
 
         except Exception as e:
@@ -59,6 +58,8 @@ class UpdateAppointmentPaymentStatusView(APIView):
             appointment = Appointment.objects.get(id=appointment_id)
             appointment.paid = True
             appointment.save()
+            appointment_room_name = f"#{appointment.id} - {appointment.doctor.user.first_name} {appointment.doctor.user.last_name}"
+            AppointmentRoom.objects.create(appointment=appointment, name=appointment_room_name)
             return Response({'status': 'success'}, status=status.HTTP_200_OK)
         except Appointment.DoesNotExist:
             return Response({'error': 'Appointment not found'}, status=status.HTTP_404_NOT_FOUND)

@@ -33,4 +33,6 @@ const authSlice = createSlice({
   }
 });
 
+export const accountId = (state) => state.auth.account.id;
+
 export default authSlice;

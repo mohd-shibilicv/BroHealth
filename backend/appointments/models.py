@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 from patients.models import Patient
 from doctors.models import Doctor
@@ -36,3 +37,22 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f"Appointment of {self.patient.user.first_name} {self.patient.user.last_name} with Dr. {self.doctor.user.first_name} {self.doctor.user.last_name} on {self.date_and_time}"
+
+
+class AppointmentRoom(models.Model):
+    appointment = models.OneToOneField(Appointment, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.appointment.id} - {self.name}"
+
+
+class AppointmentChat(models.Model):
+    room = models.ForeignKey(AppointmentRoom, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender.first_name} {self.sender.last_name}: {self.message}"
