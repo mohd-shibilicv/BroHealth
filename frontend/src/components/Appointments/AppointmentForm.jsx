@@ -7,13 +7,22 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DigitalClock } from "@mui/x-date-pickers/DigitalClock";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const shouldDisableTime = (value, view) => {
+const shouldDisableTime = (value, view, selectedDate) => {
+  const currentDate = new Date();
+  const currentHour = currentDate.getHours();
   const hour = value.hour();
   if (view === "hours") {
-    return hour < 9 || hour > 18;
+    const isToday =
+      selectedDate &&
+      new Date(selectedDate).toDateString() === currentDate.toDateString();
+    if (isToday) {
+      return hour < currentHour || hour >= 18;
+    } else {
+      return hour < 9 || hour > 18;
+    }
   }
   return false;
 };
@@ -34,7 +43,7 @@ const AppointmentPage = () => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-  
+
     try {
       const formattedDateTime = `${selectedDate}T${selectedTime}:00Z`;
 
@@ -53,35 +62,40 @@ const AppointmentPage = () => {
           },
           params: {
             doctor_id: doctor.id,
-          }
+          },
         }
       );
       setLoading(false);
-      toast.success("Successfully made an appointment request!\nConfirmation notification will be sent to you on doctor approval", {
-        style: {
-          background: "#000",
-          color: "#fff",
-        },
-        position: "bottom-right",
-        pauseOnHover: true,
-        draggable: true,
-      });
+      toast.success(
+        "Successfully made an appointment request!\nConfirmation notification will be sent to you on doctor approval",
+        {
+          style: {
+            background: "#000",
+            color: "#fff",
+          },
+          position: "bottom-right",
+          pauseOnHover: true,
+          draggable: true,
+        }
+      );
       setTimeout(() => {
         navigate(`/doctors/${doctor.id}`);
       }, 3000);
-  
     } catch (error) {
-    setLoading(false);
-      console.error('Failed to create appointment:', error);
-      toast.error("Error making an appointment with the doctor.\n Try again later.", {
-        style: {
-          background: "#000",
-          color: "#fff",
-        },
-        position: "bottom-right",
-        pauseOnHover: true,
-        draggable: true,
-      });
+      setLoading(false);
+      console.error("Failed to create appointment:", error);
+      toast.error(
+        "Error making an appointment with the doctor.\n Try again later.",
+        {
+          style: {
+            background: "#000",
+            color: "#fff",
+          },
+          position: "bottom-right",
+          pauseOnHover: true,
+          draggable: true,
+        }
+      );
     }
   };
 
@@ -130,15 +144,17 @@ const AppointmentPage = () => {
               sx={{ mb: 2 }}
             />
             <DigitalClock
-            skipDisabled
-            timeStep={60}
-            label="Time Slot"
-            name="timeSlot"
-            ampm={false}
-            onChange={handleTimeSelect}
-            sx={{ mb: 2 }}
-            shouldDisableTime={shouldDisableTime}
-          />
+              skipDisabled
+              timeStep={60}
+              label="Time Slot"
+              name="timeSlot"
+              ampm={false}
+              onChange={handleTimeSelect}
+              sx={{ mb: 2 }}
+              shouldDisableTime={(value, view) =>
+                shouldDisableTime(value, view, selectedDate)
+              }
+            />
           </LocalizationProvider>
           <TextField
             fullWidth
@@ -165,12 +181,16 @@ const AppointmentPage = () => {
             }}
           >
             {loading ? (
-                <div className="animate-spin inline-block w-6 h-6 border-[3px] border-current border-t-transparent text-yellow-1000 rounded-full" role="status" aria-label="loading">
-                  <span className="sr-only">Loading...</span>
-                </div>
-              ) : (
-                <p>Confirm Appointment</p>
-              )}
+              <div
+                className="animate-spin inline-block w-6 h-6 border-[3px] border-current border-t-transparent text-yellow-1000 rounded-full"
+                role="status"
+                aria-label="loading"
+              >
+                <span className="sr-only">Loading...</span>
+              </div>
+            ) : (
+              <p>Confirm Appointment</p>
+            )}
           </Button>
         </form>
       </div>

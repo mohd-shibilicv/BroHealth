@@ -16,7 +16,6 @@ const DoctorDetailsPage = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_APP_API_BASE_URL}/doctors/${id}/`
         );
-        console.log(response.data);
         setDoctor(response.data);
         setLoading(false);
       } catch (error) {

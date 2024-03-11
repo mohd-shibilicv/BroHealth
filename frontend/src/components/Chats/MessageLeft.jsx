@@ -9,6 +9,19 @@ export const MessageLeft = (props) => {
   const photoURL = props.photoURL ? props.photoURL : "";
   const displayName = props.displayName ? props.displayName : "Shibli CV";
 
+  // Regular expression to detect links
+  const urlRegex = /(http?:\/\/[^\s]+)/g;
+
+  // Function to replace links with <a> tags
+  const replaceLinks = (text) => {
+    return text.replace(urlRegex, (match) => {
+      return `<a href="${match}" target="_blank" rel="noopener noreferrer" className="text-indigo-500 hover:underline">${match}</a>`;
+    });
+  };
+
+  // Apply link replacement to the message
+  const messageWithLinks = replaceLinks(message);
+
   return (
     <>
       <div className="flex w-full justify-start items-start">
@@ -27,7 +40,10 @@ export const MessageLeft = (props) => {
         <div className="border border-black px-3 py-2 rounded mb-2">
           <div className="text-xs">{displayName}</div>
           <div>
-            <p className="text-md py-2 font-semibold">{message}</p>
+            <div
+              className="font-semibold text-md py-2"
+              dangerouslySetInnerHTML={{ __html: messageWithLinks }}
+            />
             <div className="text-xs">{timestamp}</div>
           </div>
         </div>

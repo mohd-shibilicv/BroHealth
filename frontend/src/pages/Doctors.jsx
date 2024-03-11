@@ -6,56 +6,27 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import Box from "@mui/material/Box";
 import SearchIcon from "@mui/icons-material/Search";
 import { Link } from "react-router-dom";
-import { CircularProgress, TextField } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchDoctors, setSearchTerm, setPage } from "../store/slices/doctorSlice";
 
 const Doctors = () => {
   const [showFilter, setShowFilter] = useState(false);
   const [sort, setSort] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [categories, setCategories] = useState();
-  const [doctors, setDoctors] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const dispatch = useDispatch();
+  const { doctors, loading, error, searchTerm, page, totalPages } = useSelector(
+    (state) => state.doctors
+  );
 
   useEffect(() => {
-    const fetchDoctors = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_APP_API_BASE_URL}/doctors/`,
-          {
-            params: {
-              page: page,
-              search: searchTerm,
-            },
-          }
-        );
-        setDoctors(response.data);
-        setTotalPages(response.data.count);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        console.error("Failed to fetch data:", error);
-      }
-    };
-
-    fetchDoctors();
-  }, [searchTerm, page]);
+    dispatch(fetchDoctors({ page, searchTerm }));
+  }, [dispatch, page, searchTerm]);
 
   const handleFilterToggle = () => {
     setShowFilter(!showFilter);
   };
 
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
-  };
-
   const handleSearch = (e) => {
-    const searchTerm = e.target.value;
-    setSearchTerm(searchTerm);
+    dispatch(setSearchTerm(e.target.value));
   };
 
   const handleSortChange = (event) => {
@@ -63,7 +34,7 @@ const Doctors = () => {
   };
 
   const handlePageChange = (event, newPage) => {
-    setPage(newPage);
+    dispatch(setPage(newPage));
   };
 
   return (

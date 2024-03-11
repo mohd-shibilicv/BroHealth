@@ -8,11 +8,27 @@ export const MessageRight = (props) => {
   const photoURL = props.photoURL ? props.photoURL : "doctor2.jpg";
   const displayName = props.displayName ? props.displayName : "Shibli CV";
 
+  // Regular expression to detect links
+  const urlRegex = /(http?:\/\/[^\s]+)/g;
+
+  // Function to replace links with <a> tags
+  const replaceLinks = (text) => {
+    return text.replace(urlRegex, (match) => {
+      return `<a href="${match}" target="_blank" rel="noopener noreferrer" className="text-red-500 hover:underline">${match}</a>`;
+    });
+  };
+
+  // Apply link replacement to the message
+  const messageWithLinks = replaceLinks(message);
+
   return (
     <div className="flex w-full justify-end items-start mb-2">
       <div className="mx-2 bg-black text-white px-3 py-2 rounded">
         <p className="text-xs">{displayName}</p>
-        <p className="font-semibold text-md py-2">{message}</p>
+        <div
+          className="font-semibold text-md py-2"
+          dangerouslySetInnerHTML={{ __html: messageWithLinks }}
+        />
         <p className="text-xs text-gray-300">{timestamp}</p>
       </div>
       <Avatar

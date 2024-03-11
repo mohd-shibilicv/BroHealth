@@ -50,9 +50,11 @@ const refreshAuthLogic = async failedRequest => {
       })
       .catch(err => {
         if (err.response && err.response.status === 401) {
-          store.dispatch(authSlice.actions.setLogout());
+          store.dispatch(authSlice.actions.logout());
         }
       });
+  } else {
+    store.dispatch(authSlice.actions.logout());
   }
 };
 
