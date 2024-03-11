@@ -35,9 +35,11 @@ class AppointmentRoomSerializer(serializers.ModelSerializer):
     """
     A Serializer for the AppointmentRoom model.
     """
+    appointment = AppointmentSerializer(read_only=True)
+
     class Meta:
         model = AppointmentRoom
-        fields = ['appointment', 'name', 'description']
+        fields = ['id', 'appointment', 'name', 'description']
 
 
 class AppointmentChatSerializer(serializers.ModelSerializer):

@@ -5,6 +5,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync, sync_to_async
 from django.http import HttpRequest
 from rest_framework.request import Request
+from datetime import datetime
 
 from doctors.models import Doctor
 from appointments.models import Appointment, AppointmentChat, AppointmentRoom
@@ -12,7 +13,11 @@ from appointments.models import Appointment, AppointmentChat, AppointmentRoom
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        print(self.scope["user"].role)
+        self.user = self.scope["user"]
+        if not self.user.is_authenticated:
+            await self.close()
+            return
+
         self.room_id = self.scope["url_route"]["kwargs"]["room_id"]
         self.room = await sync_to_async(AppointmentRoom.objects.get)(id=self.room_id)
         self.room_group_name = f"chat_{self.room.id}"
@@ -30,11 +35,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         print("Received")
-        print(text_data)
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
 
-        sender = "doctor" if self.scope["user"].role == "doctor" else "patient"
+        sender = self.scope["user"].role
         await self.channel_layer.group_send(
             self.room_group_name,
             {
@@ -44,12 +48,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def chat_message(self, event):
-        message = event["message"]
+        try:
+            message = event["message"]
 
-        # Create a new AppointmentChat instance
-        await sync_to_async(AppointmentChat.objects.create)(
-            room=self.room, sender=self.scope["user"], message=message
-        )
+            message_data = {
+                "content": message["content"],
+                "sender": message["sender"],
+                "timestamp": str(datetime.now()),
+            }
 
-        # Send message to WebSocket
-        await self.send(text_data=json.dumps({"message": message}))
+            # Send message to WebSocket
+            await self.send(text_data=json.dumps({"message": message_data}))
+
+        except Exception as e:
+            await self.send(text_data=json.dumps({"error": str(e)}))

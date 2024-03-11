@@ -186,13 +186,46 @@ def send_session_email(request):
     return JsonResponse({'status': 'success', 'message': 'Email scheduled for sending'})
 
 
-class AppointmentRoomList(generics.ListCreateAPIView):
+class AppointmentRoomList(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AppointmentRoomSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == "doctor":
+            return AppointmentRoom.objects.filter(appointment__doctor__user=user)
+        elif user.role == "patient":
+            return AppointmentRoom.objects.filter(appointment__patient__user=user)
+        return AppointmentRoom.objects.none()
+
+
+class AppointmentRoomCreate(generics.CreateAPIView):
     queryset = AppointmentRoom.objects.all()
     serializer_class = AppointmentRoomSerializer
     permission_classes = [IsAuthenticated]
 
+    def perform_create(self, serializer):
+        appointment_id = self.request.data.get('appointment_id')
+        appointment = get_object_or_404(Appointment, id=appointment_id)
+        serializer.save(appointment=appointment)
 
-class PatientNotificationDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = PatientNotification.objects.all()
+
+class AppointmentChatList(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AppointmentChatSerializer
+
+    def get_queryset(self):
+        room_id = self.kwargs['room_id']
+        return AppointmentChat.objects.filter(room__id=room_id)
+
+
+class AppointmentChatCreate(generics.CreateAPIView):
+    queryset = AppointmentChat.objects.all()
     serializer_class = AppointmentChatSerializer
     permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        room_id = self.kwargs['room_id']
+        message = self.kwargs['message']
+        room = get_object_or_404(AppointmentRoom, id=room_id)
+        serializer.save(room=room, sender=self.request.user, message=message)

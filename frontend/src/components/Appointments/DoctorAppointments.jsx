@@ -66,6 +66,10 @@ const DoctorAppointments = () => {
             <p className="p-2 rounded-lg bg-indigo-100 text-indigo-800">
               Confirmed
             </p>
+          ) : params.row.status === "completed" ? (
+            <p className="p-2 rounded-lg bg-green-100 text-green-800">
+              Completed
+            </p>
           ) : (
             <p className="p-2 rounded-lg bg-red-100 text-red-800">Canceled</p>
           )}
@@ -97,7 +101,7 @@ const DoctorAppointments = () => {
               <VisibilityIcon />
             </Link>
           </Tooltip>
-          {params.row.status !== "canceled" && (
+          {(params.row.status !== "canceled" && params.row.status !== "completed") && (
             <Tooltip title="Update Status" placement="right">
               <EditIcon
                 className="hover:text-indigo-900 cursor-pointer"
@@ -154,6 +158,7 @@ const DoctorAppointments = () => {
   }, []);
 
   const handleUpdateStatus = async () => {
+    console.log(status);
     try {
       const response = await axios.put(
         `${import.meta.env.VITE_APP_API_BASE_URL}/appointments/${
@@ -282,52 +287,55 @@ const DoctorAppointments = () => {
           }}
         />
       </Box>
-      {selectedAppointment && selectedAppointment.status !== "canceled" && (
-        <Dialog open={openModal} onClose={handleCloseModal}>
-          <DialogTitle>Appointment Details</DialogTitle>
-          <DialogContent>
-            <TextField
-              label="Patient Name"
-              value={`${selectedAppointment?.patient.user.first_name} ${selectedAppointment?.patient.user.last_name}`}
-              fullWidth
-              readOnly
-              sx={{ mb: 2, mt: 2 }}
-            />
-            <TextField
-              label="Date & Time"
-              value={moment
-                .utc(selectedAppointment?.date_and_time)
-                .format("MMMM Do YYYY, h:mm:ss a")}
-              fullWidth
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Additional Notes"
-              value={selectedAppointment?.additional_notes}
-              fullWidth
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              select
-              label="Status"
-              defaultValue={status || selectedAppointment?.status}
-              fullWidth
-              onChange={(e) => setStatus(e.target.value)}
-              sx={{ mb: 2 }}
-            >
-              <MenuItem value="confirmed">Confirmed</MenuItem>
-              <MenuItem value="canceled">Cancelled</MenuItem>
-              <MenuItem value="pending">Pending</MenuItem>
-            </TextField>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseModal}>Cancel</Button>
-            <Button onClick={handleUpdateStatus}>Save</Button>
-          </DialogActions>
-        </Dialog>
-      )}
+      {selectedAppointment &&
+        (selectedAppointment.status !== "canceled" ||
+          selectedAppointment.status !== "completed") && (
+          <Dialog open={openModal} onClose={handleCloseModal}>
+            <DialogTitle>Appointment Details</DialogTitle>
+            <DialogContent>
+              <TextField
+                label="Patient Name"
+                value={`${selectedAppointment?.patient.user.first_name} ${selectedAppointment?.patient.user.last_name}`}
+                fullWidth
+                readOnly
+                sx={{ mb: 2, mt: 2 }}
+              />
+              <TextField
+                label="Date & Time"
+                value={moment
+                  .utc(selectedAppointment?.date_and_time)
+                  .format("MMMM Do YYYY, h:mm:ss a")}
+                fullWidth
+                readOnly
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                label="Additional Notes"
+                value={selectedAppointment?.additional_notes}
+                fullWidth
+                readOnly
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                select
+                label="Status"
+                value={status || selectedAppointment?.status}
+                fullWidth
+                onChange={(e) => setStatus(e.target.value)}
+                sx={{ mb: 2 }}
+              >
+                <MenuItem value="confirmed">Confirmed</MenuItem>
+                <MenuItem value="completed">Completed</MenuItem>
+                <MenuItem value="canceled">Cancelled</MenuItem>
+                <MenuItem value="pending">Pending</MenuItem>
+              </TextField>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseModal}>Cancel</Button>
+              <Button onClick={handleUpdateStatus}>Save</Button>
+            </DialogActions>
+          </Dialog>
+        )}
     </div>
   );
 };

@@ -11,6 +11,7 @@ import ChatSection from "./Patients/Dashboard/ChatSection";
 import Notifications from "./Patients/Dashboard/Notifications";
 import Account from "./Patients/Dashboard/Account";
 import PatientAppointmentDetails from "../components/Appointments/PatientAppointmentDetails";
+import PatientChat from "../components/Chats/PatientChat";
 
 const PatientDashboardView = () => {
   return (
@@ -27,6 +28,7 @@ const PatientDashboardView = () => {
             <Route path="/medical-history" element={<MedicalHistory />} />
             <Route path="/prescriptions" element={<Prescriptions />} />
             <Route path="/chat" element={<ChatSection />} />
+            <Route path="/chat/:roomId" element={<PatientChat />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/profile" element={<DashboardProfile />} />
             <Route path="/account" element={<Account />} />
