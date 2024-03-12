@@ -108,8 +108,11 @@ ASGI_APPLICATION = 'brohealth.asgi.application'
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(os.getenv("REDIS_HOST"), os.getenv("REDIS_PORT"))],
+        },
+    },
 }
 
 # Database
@@ -216,6 +219,10 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_BEAT_SCHEDULE = {
     'send_appointment_reminder_emails': {
         'task': 'appointments.tasks.send_appointment_reminder_emails',
-        'schedule': crontab(minute='*/1'),
+        'schedule': crontab(minute='*/5'),
+    },
+    'remove_past_appointments': {
+        'task': 'appointments.tasks.remove_past_appointments',
+        'schedule': crontab(minute=0, hour=0),  # Run at midnight every day
     },
 }

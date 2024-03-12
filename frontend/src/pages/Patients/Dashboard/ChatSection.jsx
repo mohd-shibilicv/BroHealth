@@ -1,68 +1,44 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import {
-  List,
-  ListItem,
-  ListItemText,
-  CircularProgress,
-  Box,
-} from "@mui/material";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { CircularProgress, Box, Grid } from "@mui/material";
+import PatientRooms from "../../../components/Chats/PatientRooms";
+import PatientChat from "../../../components/Chats/PatientChat";
+import { useParams } from "react-router-dom";
 
 const ChatSection = () => {
-  const token = useSelector((state) => state.auth.token);
-  const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const response = await axios.get(
-          `${
-            import.meta.env.VITE_APP_API_BASE_URL
-          }/appointments/appointment-rooms/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setRooms(response.data.results);
-      } catch (error) {
-        console.error("Failed to fetch appointment rooms:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRooms();
-  }, []);
+  const { roomId } = useParams();
 
   return (
     <div>
-      {loading ? (
-        <div className="relative flex min-h-[500px] justify-center items-center">
-          <Box sx={{ display: "flex" }}>
-            <CircularProgress color="inherit" />
-          </Box>
-        </div>
-      ) : (
-        <List>
-          {rooms.map((room) => (
-            <Link key={room.id} to={`/dashboard/chat/${room.id}`}>
-              <ListItem className="mb-2 border border-black">
-                <ListItemText
-                  primary={room.name}
-                  secondary={room.description}
-                />
-              </ListItem>
-            </Link>
-          ))}
-        </List>
-      )}
+      <Grid container sx={{ mt: 2 }} spacing={2}>
+        <Grid item xs={3}>
+          <PatientRooms />
+        </Grid>
+        <Grid item xs={9}>
+          {roomId ? <PatientChat /> : <NoRoomSelected />}
+        </Grid>
+      </Grid>
     </div>
   );
 };
+
+const NoRoomSelected = () => (
+  <Box
+    display="flex"
+    justifyContent="center"
+    alignItems="center"
+    minHeight="600px"
+    border={1}
+    borderColor="text.disabled"
+    borderRadius={1}
+    p={4}
+  >
+    <div className="flex justify-center items-center flex-col gap-2">
+      <h2 className="text-xl font-semibold">No Room Selected</h2>
+      <p className="text-sm">
+        Please select a room from the list to start a conversation.
+      </p>
+    </div>
+  </Box>
+);
 
 export default ChatSection;

@@ -26,6 +26,5 @@ export const useWebSocket = (url, token) => {
     };
   }, [url, token]);
 
-
   return { client };
 };

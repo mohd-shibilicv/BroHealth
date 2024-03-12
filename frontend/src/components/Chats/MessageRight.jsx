@@ -6,7 +6,7 @@ export const MessageRight = (props) => {
   const message = props.message ? props.message : "no message";
   const timestamp = props.timestamp ? props.timestamp : "";
   const photoURL = props.photoURL ? props.photoURL : "doctor2.jpg";
-  const displayName = props.displayName ? props.displayName : "Shibli CV";
+  const displayName = props.displayName ? props.displayName : "";
 
   // Regular expression to detect links
   const urlRegex = /(http?:\/\/[^\s]+)/g;
@@ -21,6 +21,11 @@ export const MessageRight = (props) => {
   // Apply link replacement to the message
   const messageWithLinks = replaceLinks(message);
 
+  function formatMessageTimestamp(message_timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString();
+  }
+
   return (
     <div className="flex w-full justify-end items-start mb-2">
       <div className="mx-2 bg-black text-white px-3 py-2 rounded">
@@ -29,7 +34,7 @@ export const MessageRight = (props) => {
           className="font-semibold text-md py-2"
           dangerouslySetInnerHTML={{ __html: messageWithLinks }}
         />
-        <p className="text-xs text-gray-300">{timestamp}</p>
+        <p className="text-xs text-gray-300">{formatMessageTimestamp(timestamp)}</p>
       </div>
       <Avatar
         sx={{

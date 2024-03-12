@@ -9,6 +9,7 @@ from datetime import datetime
 
 from doctors.models import Doctor
 from appointments.models import Appointment, AppointmentChat, AppointmentRoom
+from appointments.serializers import AppointmentRoomSerializer
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -50,14 +51,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def chat_message(self, event):
         try:
             message = event["message"]
+            sender = message["sender"]
 
             message_data = {
                 "content": message["content"],
-                "sender": message["sender"],
+                "sender": sender,
                 "timestamp": str(datetime.now()),
             }
 
-            # Send message to WebSocket
             await self.send(text_data=json.dumps({"message": message_data}))
 
         except Exception as e:

@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import moment from "moment-timezone";
 import { Box, Button, CircularProgress, TextField } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
@@ -276,12 +276,6 @@ const PatientAppointmentDetails = () => {
                     {appointmentDetails.doctor.education}
                   </p>
                 </div>
-                <div className="flex flex-col justify-end rounded-2xl bg-white bg-clip-border px-3 py-4 shadow-3xl shadow-shadow-500">
-                  <p className="text-sm text-gray-600">Consultation Fee</p>
-                  <p className="text-base font-medium text-navy-700">
-                    $ {appointmentDetails.doctor.consultation_fee}
-                  </p>
-                </div>
               </div>
               <div className="flex justify-between w-full">
                 <div className="flex flex-col items-start justify-center rounded-2xl bg-white bg-clip-border px-3 py-4 shadow-3xl shadow-shadow-500">
@@ -362,6 +356,23 @@ const PatientAppointmentDetails = () => {
                       <p>Cancel Appointment</p>
                     )}
                   </Button>
+                )}
+                {appointmentDetails.paid && (
+                  <Link to="/chats" className="w-full">
+                    <Button
+                      fullWidth
+                      type="submit"
+                      variant="outlined"
+                      color="inherit"
+                      sx={{
+                        mt: 3,
+                        mb: 2,
+                      }}
+                    >
+                      Chat With Dr. {appointmentDetails.doctor.user.first_name}{" "}
+                      {appointmentDetails.doctor.user.last_name}
+                    </Button>
+                  </Link>
                 )}
                 <Button
                   fullWidth

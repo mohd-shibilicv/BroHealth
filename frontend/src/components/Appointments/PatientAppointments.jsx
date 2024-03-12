@@ -47,6 +47,10 @@ const columns = [
           <p className="p-2 rounded-lg bg-indigo-100 text-indigo-800">
             Confirmed
           </p>
+        ) : params.row.status === "completed" ? (
+          <p className="p-2 rounded-lg bg-green-100 text-green-800">
+            Completed
+          </p>
         ) : (
           <p className="p-2 rounded-lg bg-red-100 text-red-800">Canceled</p>
         )}

@@ -27,8 +27,6 @@ const PatientDashboardView = () => {
             />
             <Route path="/medical-history" element={<MedicalHistory />} />
             <Route path="/prescriptions" element={<Prescriptions />} />
-            <Route path="/chat" element={<ChatSection />} />
-            <Route path="/chat/:roomId" element={<PatientChat />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/profile" element={<DashboardProfile />} />
             <Route path="/account" element={<Account />} />

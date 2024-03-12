@@ -213,6 +213,19 @@ const PatientNotifications = () => {
     }
   };
 
+  // Regular expression to detect links
+  const urlRegex = /(http?:\/\/[^\s]+)/g;
+
+  // Function to replace links with <a> tags
+  const replaceLinks = (text) => {
+    return text?.replace(urlRegex, (match) => {
+      return `<a href="${match}" target="_blank" rel="noopener noreferrer" className="text-red-500 hover:underline">${match}</a>`;
+    });
+  };
+
+  // Apply link replacement to the message
+  const messageWithLinks = replaceLinks(selectedNotification?.message);
+
   const renderIsReadCell = (params) => (
     <Button color={params.value ? "success" : "error"}>
       <span>{params.value ? "Read" : "Unread"}</span>
@@ -268,7 +281,7 @@ const PatientNotifications = () => {
   ];
 
   return (
-    <div style={{ height: "100%", width: "100%" }}>
+    <div className="flex mx-auto h-full w-[1200px]">
       <ToastContainer />
       <DataGrid
         autoHeight
@@ -330,11 +343,10 @@ const PatientNotifications = () => {
             />
           </ListItemButton>
           <Divider />
-            <ListItemText
+          <div
             className="m-5"
-              primary="Message"
-              secondary={selectedNotification?.message}
-            />
+            dangerouslySetInnerHTML={{ __html: messageWithLinks }}
+          />
           <Divider />
           <ListItemButton>
             <ListItemText

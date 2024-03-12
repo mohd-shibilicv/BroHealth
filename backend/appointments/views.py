@@ -154,19 +154,6 @@ def send_session_email(request):
         'room_url': room_url,
     })
 
-    # Check if a notification already exists for this appointment
-    existing_notification = PatientNotification.objects.filter(
-        patient=patient,
-        related_appointment=appointment
-    ).first()
-
-    if existing_notification:
-        # If a notification already exists, return a message
-        return JsonResponse({
-            'status': 'info',
-            'message': 'A notification for this appointment already exists'
-        })
-
     PatientNotification.objects.create(
         patient=patient,
         message=text_content,

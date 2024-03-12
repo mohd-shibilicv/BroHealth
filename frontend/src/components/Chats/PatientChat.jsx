@@ -6,19 +6,19 @@ import { MessageRight } from "./MessageRight";
 import SendIcon from "@mui/icons-material/Send";
 import Button from "@mui/material/Button";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import MedicationIcon from "@mui/icons-material/Medication";
 import axios from "axios";
 import { useWebSocket } from "../../hooks/useWebSocket";
 
-function PatientChat() {
+const PatientChat = () => {
   const { roomId } = useParams();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const token = useSelector((state) => state.auth.token);
 
   const { client } = useWebSocket(
-    `${import.meta.env.VITE_APP_API_WEB_SOCKET_BASE_URL}/ws/chat/${roomId}/`,
+    `${import.meta.env.VITE_APP_API_WEB_SOCKET_BASE_URL}/ws/chat/${roomId}`,
     token
   );
 
@@ -31,37 +31,37 @@ function PatientChat() {
     }
   }, [client]);
 
-  // Fetch initial chat history
-  useEffect(() => {
-    const fetchInitialChatHistory = async () => {
-      try {
-        const response = await axios.get(
-          `${
-            import.meta.env.VITE_APP_API_BASE_URL
-          }/appointments/appointment-rooms/${roomId}/chats/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const parsedMessages = response.data.results.map((item) => {
-          const messageObj = JSON.parse(item.message);
-          return {
-            ...messageObj,
-            room: item.room,
-            sender: messageObj.sender,
-            timestamp: item.timestamp,
-          };
-        });
-        setMessages(parsedMessages);
-      } catch (error) {
-        console.error("Failed to fetch initial chat history:", error);
-      }
-    };
+  // Fetch initial chat history and appointment name
+  // useEffect(() => {
+  //   const fetchInitialChatHistory = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${
+  //           import.meta.env.VITE_APP_API_BASE_URL
+  //         }/appointments/appointment-rooms/${roomId}/chats/`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
+  //       const parsedMessages = response.data.results.map((item) => {
+  //         const messageObj = JSON.parse(item.message);
+  //         return {
+  //           ...messageObj,
+  //           room: item.room,
+  //           sender: messageObj.sender,
+  //           timestamp: item.timestamp,
+  //         };
+  //       });
+  //       setMessages(parsedMessages);
+  //     } catch (error) {
+  //       console.error("Failed to fetch initial chat history:", error);
+  //     }
+  //   };
 
-    fetchInitialChatHistory();
-  }, [roomId, token]);
+  //   fetchInitialChatHistory();
+  // }, [roomId, token]);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -79,8 +79,10 @@ function PatientChat() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        flexDirection: "column",
       }}
     >
+      <h2 className="text-2xl font-bold mb-4 border border-black p-2 text-black text-center rounded-xl mr-4">Chat Room</h2>
       <Paper
         id="style-1"
         sx={{
@@ -102,14 +104,14 @@ function PatientChat() {
               <MessageRight
                 message={msg.content}
                 timestamp={msg.timestamp}
-                displayName="Patient's Name"
+                displayName=""
                 avatarDisp={true}
               />
             ) : (
               <MessageLeft
                 message={msg.content}
                 timestamp={msg.timestamp}
-                displayName="Doctor's Name"
+                displayName=""
                 avatarDisp={true}
               />
             )}
@@ -153,6 +155,6 @@ function PatientChat() {
       </form>
     </div>
   );
-}
+};
 
 export default PatientChat;
