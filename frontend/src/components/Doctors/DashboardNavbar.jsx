@@ -18,8 +18,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import GroupIcon from "@mui/icons-material/Group";
 import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
-import PaymentsIcon from '@mui/icons-material/Payments';
-import ChatIcon from "@mui/icons-material/Chat";
+import BadgeIcon from '@mui/icons-material/Badge';
 import MedicationIcon from "@mui/icons-material/Medication";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import FormatListNumberedRtlIcon from "@mui/icons-material/FormatListNumberedRtl";
@@ -288,10 +287,10 @@ export default function DashboardNavbar({ content }) {
                 px: 2.5,
               }}
               component={Link}
-              to="/doctor-dashboard/payments"
-              selected={"/doctor-dashboard/payments" === path}
+              to="/doctor-dashboard/presciptions"
+              selected={"/doctor-dashboard/presciptions" === path}
             >
-              <Tooltip title="Payments" placement="right-end">
+              <Tooltip title="Prescriptions" placement="right-end">
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
@@ -300,39 +299,13 @@ export default function DashboardNavbar({ content }) {
                     color: "black",
                   }}
                 >
-                  <PaymentsIcon />
+                  <BadgeIcon />
                 </ListItemIcon>
               </Tooltip>
               <ListItemText
-                primary="Payments"
+                primary="Prescriptions"
                 sx={{ opacity: open ? 1 : 0 }}
               />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
-              component={Link}
-              to="/doctor-dashboard/chat"
-              selected={"/doctor-dashboard/chat" === path}
-            >
-              <Tooltip title="Chats" placement="right-end">
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                    color: "black",
-                  }}
-                >
-                  <ChatIcon />
-                </ListItemIcon>
-              </Tooltip>
-              <ListItemText primary="Chats" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding sx={{ display: "block" }}>

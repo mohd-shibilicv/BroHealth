@@ -209,7 +209,8 @@ const DoctorAppointmentDetails = () => {
                       mb: 2,
                     }}
                   >
-                    Chat with {appointment.patient.user.first_name} {appointment.patient.user.last_name}
+                    Chat with {appointment.patient.user.first_name}{" "}
+                    {appointment.patient.user.last_name}
                   </Button>
                 </Link>
                 <Button
@@ -230,6 +231,32 @@ const DoctorAppointmentDetails = () => {
                 >
                   Start the session
                 </Button>
+              </Grid>
+            )}
+            {appointment.status === "completed" && (
+              <Grid item xs={12}>
+                <Link
+                  to="/doctor-dashboard/prescriptions/create"
+                  state={{ appointment: appointment }}
+                >
+                  <Button
+                    fullWidth
+                    color="inherit"
+                    variant="outlined"
+                    sx={{
+                      color: "black",
+                      backgroundColor: "rgb(17  24  39 /  0)",
+                      borderColor: "black",
+                      "&:hover": {
+                        backgroundColor: "rgb(17  24  39 / 1)",
+                        borderColor: "black",
+                        color: "white",
+                      },
+                    }}
+                  >
+                    Create Prescription
+                  </Button>
+                </Link>
               </Grid>
             )}
           </Grid>

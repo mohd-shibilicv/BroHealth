@@ -200,99 +200,111 @@ const PatientAppointmentDetails = () => {
         </div>
       ) : (
         <>
-          <div className="w-full mx-auto flex justify-center mt-5">
-            <h2 className="text-xl font-semibold">Appointment Details</h2>
+          <div className="text-xl font-medium text-center my-5">
+            Appointment Details
           </div>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                label="Appointment Type"
+                value={appointmentDetails.consultation_type}
+                fullWidth
+                readOnly
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                label="Payment Status"
+                value={appointmentDetails.paid ? "Paid" : "Pending"}
+                fullWidth
+                readOnly
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                label="Appointment Status"
+                value={appointmentDetails.status}
+                fullWidth
+                readOnly
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                label="Date & Time"
+                value={moment
+                  .utc(appointmentDetails.date_and_time)
+                  .format("MMMM Do YYYY, h:mm:ss a")}
+                fullWidth
+                readOnly
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+            {appointmentDetails.additional_notes && (
+              <Grid item xs={12} sm={6} md={4}>
+                <TextField
+                  label="Additional Information"
+                  value={appointmentDetails.additional_notes}
+                  fullWidth
+                  readOnly
+                  sx={{ mb: 2 }}
+                />
+              </Grid>
+            )}
+          </Grid>
 
-          <div className="flex flex-col justify-center items-center w-full">
-            <div className="relative flex flex-col items-center rounded-[20px] w-[700px] max-w-[95%] mx-auto bg-white bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:!shadow-none p-3">
-              <div className="flex justify-between w-full">
-                <div className="flex flex-col items-start justify-center rounded-2xl bg-white bg-clip-border px-3 py-4 shadow-3xl shadow-shadow-500">
-                  <p className="text-sm text-gray-600">Appointment Type</p>
-                  <p className="text-base font-medium text-navy-700">
-                    {appointmentDetails.consultation_type}
-                  </p>
-                </div>
-                <div className="flex flex-col items-start justify-center rounded-2xl bg-white bg-clip-border px-3 py-4 shadow-3xl shadow-shadow-500">
-                  <p className="text-sm text-gray-600">Payment Status</p>
-                  <p className="text-base font-medium text-navy-700">
-                    {appointmentDetails.paid ? "Paid" : "Pending"}
-                  </p>
-                </div>
-                <div className="flex flex-col justify-end rounded-2xl bg-white bg-clip-border px-3 py-4 shadow-3xl shadow-shadow-500">
-                  <p className="text-sm text-gray-600">Appointment Status</p>
-                  <p className="text-base font-medium text-navy-700">
-                    {appointmentDetails.status}
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-between w-full">
-                <div className="flex flex-col items-start justify-center rounded-2xl bg-white bg-clip-border px-3 py-4 shadow-3xl shadow-shadow-500">
-                  <p className="text-sm text-gray-600">Date & Time</p>
-                  <p className="text-base font-medium text-navy-700">
-                    {moment
-                      .utc(appointmentDetails.date_and_time)
-                      .format("MMMM Do YYYY, h:mm:ss a")}
-                  </p>
-                </div>
-                {appointmentDetails.additional_notes && (
-                  <div className="flex flex-col justify-end rounded-2xl bg-white bg-clip-border px-3 py-4 shadow-3xl shadow-shadow-500">
-                    <p className="text-sm text-gray-600">
-                      Additional Information
-                    </p>
-                    <p className="text-base font-medium text-navy-700">
-                      {appointmentDetails.additional_notes}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
+          <div className="text-xl font-medium text-center my-5">
+            Doctor Details
           </div>
-          <div className="w-full mx-auto flex justify-center mt-10">
-            <h2 className="text-xl font-semibold">Doctor Details</h2>
-          </div>
-
-          <div className="flex flex-col justify-center items-center w-full">
-            <div className="relative flex flex-col items-center rounded-[20px] w-[700px] max-w-[95%] mx-auto bg-white bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:!shadow-none p-3">
-              <div className="flex justify-between w-full">
-                <div className="flex flex-col items-start justify-center rounded-2xl bg-white bg-clip-border px-3 py-4 shadow-3xl shadow-shadow-500">
-                  <p className="text-sm text-gray-600">Doctor Name</p>
-                  <p className="text-base font-medium text-navy-700">
-                    Dr. {appointmentDetails.doctor.user.first_name}{" "}
-                    {appointmentDetails.doctor.user.last_name}
-                  </p>
-                </div>
-                <div className="flex flex-col justify-end rounded-2xl bg-white bg-clip-border px-3 py-4 shadow-3xl shadow-shadow-500">
-                  <p className="text-sm text-gray-600">Doctor Email</p>
-                  <p className="text-base font-medium text-navy-700">
-                    {appointmentDetails.doctor.user.email}
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-between w-full">
-                <div className="flex flex-col items-start justify-center rounded-2xl bg-white bg-clip-border px-3 py-4 shadow-3xl shadow-shadow-500">
-                  <p className="text-sm text-gray-600">Education</p>
-                  <p className="text-base font-medium text-navy-700">
-                    {appointmentDetails.doctor.education}
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-between w-full">
-                <div className="flex flex-col items-start justify-center rounded-2xl bg-white bg-clip-border px-3 py-4 shadow-3xl shadow-shadow-500">
-                  <p className="text-sm text-gray-600">Specilaization</p>
-                  <p className="text-base font-medium text-navy-700">
-                    {appointmentDetails.doctor.specialization}
-                  </p>
-                </div>
-                <div className="flex flex-col justify-end rounded-2xl bg-white bg-clip-border px-3 py-4 shadow-3xl shadow-shadow-500">
-                  <p className="text-sm text-gray-600">Years of Experience</p>
-                  <p className="text-base font-medium text-navy-700">
-                    {appointmentDetails.doctor.years_of_experience}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                label="Doctor Name"
+                value={`Dr. ${appointmentDetails.doctor.user.first_name} ${appointmentDetails.doctor.user.last_name}`}
+                fullWidth
+                readOnly
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                label="Doctor Email"
+                value={appointmentDetails.doctor.user.email}
+                fullWidth
+                readOnly
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                label="Education"
+                value={appointmentDetails.doctor.education}
+                fullWidth
+                readOnly
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                label="Specialization"
+                value={appointmentDetails.doctor.specialization}
+                fullWidth
+                readOnly
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                label="Years of Experience"
+                value={appointmentDetails.doctor.years_of_experience}
+                fullWidth
+                readOnly
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+          </Grid>
           {appointmentDetails.status !== "canceled" &&
             appointmentDetails.status !== "completed" &&
             !appointmentDetails.paid && (

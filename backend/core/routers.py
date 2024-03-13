@@ -1,9 +1,11 @@
 from rest_framework.routers import SimpleRouter
+
 from accounts.views import UserModelViewSet
 from patients.views import PatientModelViewSet
 from doctors.views import DoctorModelViewSet
 from admins.views import AdminModelViewSet
 from core.viewsets import LoginViewSet, RegistrationViewSet, RefreshViewSet, VerifyAccountView
+from prescriptions.views import PrescriptionViewSet
 
 
 routes = SimpleRouter()
@@ -24,6 +26,9 @@ routes.register(r'doctor', DoctorModelViewSet, basename='doctor')
 
 # Admin
 routes.register(r'admin', AdminModelViewSet, basename='admin')
+
+# Prescriptions
+routes.register(r'prescriptions', PrescriptionViewSet, basename='prescriptions')
 
 urlpatterns = [
     *routes.urls

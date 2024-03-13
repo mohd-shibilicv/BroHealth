@@ -96,13 +96,13 @@ def send_appointment_reminder_emails():
     return "Done"
 
 
-@shared_task
-def remove_past_appointments():
-    ist_tz = pytz.timezone("Asia/Kolkata")
-    now = timezone.now().astimezone(ist_tz)
-    past_appointments = Appointment.objects.filter(
-        date_and_time__lt=now,
-        status__in=['completed', 'canceled']
-    )
-    past_appointments.delete()
-    return "Done"
+# @shared_task
+# def remove_past_appointments():
+#     ist_tz = pytz.timezone("Asia/Kolkata")
+#     now = timezone.now().astimezone(ist_tz)
+#     past_appointments = Appointment.objects.filter(
+#         date_and_time__lt=now,
+#         status__in=['completed', 'canceled']
+#     )
+#     past_appointments.delete()
+#     return "Done"

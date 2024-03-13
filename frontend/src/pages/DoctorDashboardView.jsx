@@ -10,6 +10,8 @@ import Account from "./Doctors/Dashboard/Account";
 import DashboardNavbar from "../components/Doctors/DashboardNavbar";
 import Patients from "./Doctors/Dashboard/Patients";
 import DoctorAppointmentDetails from "../components/Appointments/DoctorAppointmentDetails";
+import Prescriptions from "./Doctors/Dashboard/Prescriptions";
+import CreatePrescriptions from "../components/Prescriptions/CreatePrescriptions";
 
 const DoctorDashboardView = () => {
   return (
@@ -21,6 +23,8 @@ const DoctorDashboardView = () => {
             <Route path="/appointments" element={<Appointments />} />
             <Route path="/appointments/:appointmentId" element={<DoctorAppointmentDetails />} />
             <Route path="/patients" element={<Patients />} />
+            <Route path="/prescriptions" element={<Prescriptions />} />
+            <Route path="/prescriptions/create" element={<CreatePrescriptions />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/profile" element={<DashboardProfile />} />
             <Route path="/account" element={<Account />} />

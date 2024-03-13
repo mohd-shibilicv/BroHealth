@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'appointments.apps.AppointmentsConfig',
     'notifications.apps.NotificationsConfig',
     'payments.apps.PaymentsConfig',
+    'prescriptions.apps.PrescriptionsConfig',
 ]
 
 REST_FRAMEWORK = {
@@ -221,8 +222,8 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'appointments.tasks.send_appointment_reminder_emails',
         'schedule': crontab(minute='*/5'),
     },
-    'remove_past_appointments': {
-        'task': 'appointments.tasks.remove_past_appointments',
-        'schedule': crontab(minute=0, hour=0),  # Run at midnight every day
-    },
+    # 'remove_past_appointments': {
+    #     'task': 'appointments.tasks.remove_past_appointments',
+    #     'schedule': crontab(minute=0, hour=0),  # Run at midnight every day
+    # },
 }

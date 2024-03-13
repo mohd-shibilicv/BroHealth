@@ -7,11 +7,13 @@ import notificationsSlice from '../store/slices/NotificationsSlice.js'
 import storage from "redux-persist/lib/storage";
 import authSlice from "./slices/auth";
 import doctorsSlice from "./slices/doctorSlice.js";
+import PrescriptionSlice from "./slices/PrescriptionSlice.js";
 
 const rootReducer = combineReducers({
   auth: authSlice.reducer,
   notifications: notificationsSlice.reducer,
   doctors: doctorsSlice,
+  prescriptions: PrescriptionSlice,
 });
 
 const persistedReducer = persistReducer(
