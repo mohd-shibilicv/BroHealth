@@ -287,8 +287,8 @@ export default function DashboardNavbar({ content }) {
                 px: 2.5,
               }}
               component={Link}
-              to="/doctor-dashboard/presciptions"
-              selected={"/doctor-dashboard/presciptions" === path}
+              to="/doctor-dashboard/prescriptions"
+              selected={"/doctor-dashboard/prescriptions" === path}
             >
               <Tooltip title="Prescriptions" placement="right-end">
                 <ListItemIcon

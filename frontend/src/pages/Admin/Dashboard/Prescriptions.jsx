@@ -4,7 +4,6 @@ import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { styled } from "@mui/material/styles";
 import EditIcon from "@mui/icons-material/Edit";
 import {
@@ -16,7 +15,6 @@ import {
   Button,
   TextField,
   MenuItem,
-  Grid,
 } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -27,8 +25,6 @@ import moment from "moment-timezone";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
-import jsPDF from "jspdf";
-import { showSimpleToast } from "../../../utils/Toast";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -109,12 +105,15 @@ function CustomNoRowsOverlay() {
 const Prescriptions = () => {
   const [prescriptions, setPrescriptions] = React.useState([]);
   const [openModal, setOpenModal] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
-  const [selectedPrescription, setSelectedPrescription] = React.useState(null);
   const token = useSelector((state) => state.auth.token);
 
   const columns = [
     { field: "id", headerName: "ID", width: 150 },
+    {
+      field: "patient",
+      headerName: "Patient",
+      width: 250,
+    },
     {
       field: "doctor",
       headerName: "Doctor",
@@ -140,38 +139,17 @@ const Prescriptions = () => {
       renderCell: (params) => (
         <div className="flex justify-center gap-3">
           <Tooltip title="View" placement="top">
-            <VisibilityIcon
+            <Link
+              to={`/admin/prescriptions/${params.row.id}`}
               className="hover:text-indigo-900 cursor-pointer"
-              onClick={() => handleViewPrescription(params.row)}
-            />
-          </Tooltip>
-          <Tooltip title="Delete" placement="top">
-            <DeleteIcon
-              className="hover:text-red-600 cursor-pointer"
-              onClick={() => handleDeletePrescription(params.row)}
-            />
+            >
+              <VisibilityIcon />
+            </Link>
           </Tooltip>
         </div>
       ),
     },
   ];
-
-  const handleViewPrescription = async (prescription) => {
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_APP_API_URL}/prescriptions/${prescription.id}/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setSelectedPrescription(response.data);
-      setOpenModal(true);
-    } catch (error) {
-      console.error("Failed to fetch prescription details:", error);
-    }
-  };
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -197,68 +175,10 @@ const Prescriptions = () => {
     fetchPrescriptions();
   }, []);
 
-  const handleDeletePrescription = async (prescription) => {
-    try {
-      const response = await axios.delete(
-        `${import.meta.env.VITE_APP_API_URL}/prescriptions/${prescription.id}/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      showSimpleToast("Deleted!");
-      setPrescriptions(
-        prescriptions.filter((item) => item.id !== prescription.id)
-      );
-    } catch (error) {
-      console.error("Failed to delete the prescription:", error);
-    }
-  };
-
-  const generatePDF = () => {
-    setLoading(true);
-    const doc = new jsPDF();
-
-    // Add content to the PDF
-    doc.setFontSize(18);
-    doc.text("Prescription", 20, 20);
-
-    doc.setFontSize(12);
-    doc.text(
-      `Patient: ${selectedPrescription.patient.user.first_name} ${selectedPrescription.patient.user.last_name}`,
-      20,
-      30
-    );
-    doc.text(
-      `Doctor: ${selectedPrescription.doctor.user.first_name} ${selectedPrescription.doctor.user.last_name}`,
-      20,
-      40
-    );
-    doc.text(`Diagnosis: ${selectedPrescription.diagnosis}`, 20, 50);
-    doc.text(`Medication Details: ${selectedPrescription.medication_details}`, 20, 60);
-    doc.text(`Dosage: ${selectedPrescription.dosage}`, 20, 70);
-
-    if (selectedPrescription.additionalInstructions) {
-      doc.text(`Additional Instructions: ${selectedPrescription.additional_instructions}`, 20, 80);
-    }
-
-    if (selectedPrescription.prescription_image) {
-      const imgProps = doc.getImageProperties(selectedPrescription.prescription_image);
-      const pdfWidth = doc.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      doc.addImage(selectedPrescription.prescription_image, "JPG", 20, 90, pdfWidth - 40, pdfHeight);
-    }
-
-    // Save the PDF
-    doc.save("prescription.pdf");
-    setLoading(false);
-    handleCloseModal();
-  };
-
   const rows = Array.isArray(prescriptions)
     ? prescriptions.map((prescription) => ({
         id: prescription.id,
+        patient: `${prescription.patient.user.first_name} ${prescription.patient.user.last_name}`,
         doctor: `Dr. ${prescription.doctor.user.first_name} ${prescription.doctor.user.last_name}`,
         diagnosis: prescription.diagnosis,
         prescription_date: prescription.prescription_date,
@@ -269,7 +189,7 @@ const Prescriptions = () => {
     <div className="flex flex-col w-full justify-center">
       <ToastContainer />
       <div className="text-xl font-medium text-center my-5">
-        My Prescriptions
+        All Prescriptions
       </div>
       <Box sx={{ height: 500 }}>
         <DataGrid
@@ -285,116 +205,9 @@ const Prescriptions = () => {
             sorting: {
               sortModel: [{ field: "id", sort: "desc" }],
             },
-            toolbar: {
-              showQuickFilter: true,
-            },
           }}
         />
       </Box>
-      {selectedPrescription && (
-        <Dialog open={openModal} onClose={handleCloseModal}>
-          <DialogTitle>Prescription Details</DialogTitle>
-          <DialogContent>
-            <TextField
-              label="Doctor Name"
-              value={`Dr. ${selectedPrescription?.doctor.user.first_name} ${selectedPrescription?.doctor.user.last_name}`}
-              fullWidth
-              readOnly
-              sx={{ mb: 2, mt: 2 }}
-            />
-            {selectedPrescription?.prescription_image && (
-              <Grid
-                item
-                xs={12}
-                sx={{ display: "flex", justifyContent: "center", mb: 4 }}
-              >
-                <img
-                  src={`${selectedPrescription?.prescription_image}`}
-                  alt="Prescription Image"
-                  className="object-contain rounded-xl"
-                />
-              </Grid>
-            )}
-            <TextField
-              label="Email"
-              value={selectedPrescription?.doctor.user.email}
-              fullWidth
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Address"
-              value={selectedPrescription?.doctor.user.address}
-              fullWidth
-              multiline
-              rows={2}
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Mobile Number"
-              value={selectedPrescription?.doctor.user.mobile_number}
-              fullWidth
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Date"
-              value={moment
-                .utc(selectedPrescription?.prescription_date)
-                .format("MMMM Do YYYY")}
-              fullWidth
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Diagnosis"
-              value={selectedPrescription?.diagnosis}
-              fullWidth
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Dosage"
-              value={selectedPrescription?.dosage}
-              fullWidth
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Medication Details"
-              value={selectedPrescription?.medication_details}
-              fullWidth
-              multiline
-              rows={2}
-              readOnly
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Additional Notes"
-              value={selectedPrescription?.additional_instructions}
-              fullWidth
-              multiline
-              rows={2}
-              readOnly
-              sx={{ mb: 2 }}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button color="inherit" onClick={handleCloseModal}>
-              Close
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={generatePDF}
-              disabled={loading}
-            >
-              Download
-            </Button>
-          </DialogActions>
-        </Dialog>
-      )}
     </div>
   );
 };

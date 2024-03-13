@@ -319,10 +319,10 @@ export default function DashboardNavbar({ content }) {
                 px: 2.5,
               }}
               component={Link}
-              to="/admin/payments"
-              selected={"/admin/payments" === path}
+              to="/admin/prescriptions"
+              selected={"/admin/prescriptions" === path}
             >
-              <Tooltip title="Payments" placement="right-end">
+              <Tooltip title="Prescriptions" placement="right-end">
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
@@ -335,35 +335,9 @@ export default function DashboardNavbar({ content }) {
                 </ListItemIcon>
               </Tooltip>
               <ListItemText
-                primary="Payments"
+                primary="Prescriptions"
                 sx={{ opacity: open ? 1 : 0 }}
               />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
-              component={Link}
-              to="/admin/chat"
-              selected={"/admin/chat" === path}
-            >
-              <Tooltip title="Chats" placement="right-end">
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                    color: "black",
-                  }}
-                >
-                  <ChatIcon />
-                </ListItemIcon>
-              </Tooltip>
-              <ListItemText primary="Chats" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding sx={{ display: "block" }}>

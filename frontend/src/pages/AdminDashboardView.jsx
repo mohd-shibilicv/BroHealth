@@ -5,7 +5,6 @@ import DashboardNavbar from '../components/Admin/DashboardNavbar'
 import DashboardPage from './Admin/Dashboard/DashboardPage'
 import Appointments from './Admin/Dashboard/Appointments'
 import Doctors from './Admin/Dashboard/Doctors'
-import Payments from './Admin/Dashboard/Payments'
 import Notifications from './Admin/Dashboard/Notifications'
 import DashboardProfile from './Admin/Dashboard/DashboardProfile'
 import Account from './Admin/Dashboard/Account'
@@ -14,6 +13,8 @@ import ChatSection from './Admin/Dashboard/ChatSection'
 import AccountVerifications from './Admin/Dashboard/AccountVerifications'
 import VerificationDetails from './Admin/Dashboard/VerificationDetails'
 import AdminAppointmentDetails from '../components/Appointments/AdminAppointmentDetails'
+import Prescriptions from './Admin/Dashboard/Prescriptions'
+import AdminPrescriptionDetails from '../components/Prescriptions/AdminPrescriptionDetails'
 
 
 const AdminDashboardView = () => {
@@ -26,8 +27,8 @@ const AdminDashboardView = () => {
                 <Route path="/appointments/:appointmentId" element={<AdminAppointmentDetails />} />
                 <Route path="/patients" element={<Patients />} />
                 <Route path="/doctors" element={<Doctors />} />
-                <Route path="/payments" element={<Payments />} />
-                <Route path="/chat" element={<ChatSection />} />
+                <Route path="/prescriptions" element={<Prescriptions />} />
+                <Route path="/prescriptions/:prescriptionId" element={<AdminPrescriptionDetails />} />
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/verifications" element={<AccountVerifications />} />
                 <Route path="/verifications/detail/:verificationId" element={<VerificationDetails />} />

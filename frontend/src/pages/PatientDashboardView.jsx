@@ -25,7 +25,6 @@ const PatientDashboardView = () => {
               path="/appointments/:appointmentId"
               element={<PatientAppointmentDetails />}
             />
-            <Route path="/medical-history" element={<MedicalHistory />} />
             <Route path="/prescriptions" element={<Prescriptions />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/profile" element={<DashboardProfile />} />

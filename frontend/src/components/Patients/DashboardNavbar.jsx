@@ -269,35 +269,6 @@ export default function DashboardNavbar({ content }) {
                 px: 2.5,
               }}
               component={Link}
-              to="/dashboard/medical-history"
-              selected={"/dashboard/medical-history" === path}
-            >
-              <Tooltip title="Medical History" placement="right-end">
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                    color: "black",
-                  }}
-                >
-                  <MedicalInformationIcon />
-                </ListItemIcon>
-              </Tooltip>
-              <ListItemText
-                primary="Medical History"
-                sx={{ opacity: open ? 1 : 0 }}
-              />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
-              component={Link}
               to="/dashboard/prescriptions"
               selected={"/dashboard/prescriptions" === path}
             >
@@ -310,39 +281,13 @@ export default function DashboardNavbar({ content }) {
                     color: "black",
                   }}
                 >
-                  <LayersIcon />
+                  <MedicalInformationIcon />
                 </ListItemIcon>
               </Tooltip>
               <ListItemText
                 primary="Prescriptions"
                 sx={{ opacity: open ? 1 : 0 }}
               />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
-              component={Link}
-              to="/dashboard/chat"
-              selected={"/dashboard/chat" === path}
-            >
-              <Tooltip title="Chats" placement="right-end">
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                    color: "black",
-                  }}
-                >
-                  <ChatIcon />
-                </ListItemIcon>
-              </Tooltip>
-              <ListItemText primary="Chats" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding sx={{ display: "block" }}>
