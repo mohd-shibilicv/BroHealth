@@ -150,3 +150,4 @@ class DeactivateAccountView(APIView):
         user.is_active = False
         user.save()
         return Response({"message": "Account deactivated successfully."}, status=status.HTTP_200_OK)
+
