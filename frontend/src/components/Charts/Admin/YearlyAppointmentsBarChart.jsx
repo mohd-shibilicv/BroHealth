@@ -30,7 +30,7 @@ export default function YearlyAppointmentsBarChart({ setData }) {
     };
 
     fetchData();
-  }, [dataState]);
+  }, [setData]);
 
   if (isLoading) {
     return (

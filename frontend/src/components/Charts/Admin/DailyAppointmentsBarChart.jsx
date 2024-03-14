@@ -30,7 +30,7 @@ export default function DailyAppointmentsBarChart({ setData }) {
     };
 
     fetchData();
-  }, [dataState]);
+  }, [setData]);
 
   if (isLoading) {
     return (

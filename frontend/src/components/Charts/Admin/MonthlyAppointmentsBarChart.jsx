@@ -30,7 +30,7 @@ export default function MonthlyAppointmentsBarChart({ setData }) {
     };
 
     fetchData();
-  }, [dataState]);
+  }, [setData]);
 
   if (isLoading) {
     return (

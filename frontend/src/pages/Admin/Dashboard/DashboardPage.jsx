@@ -47,7 +47,7 @@ const DashboardPage = () => {
     };
 
     fetchUserRoleCounts();
-  }, [userId]);
+  }, [user]);
 
   const handleChartSelection = (chartType) => {
     setSelectedChart(chartType);
@@ -58,6 +58,13 @@ const DashboardPage = () => {
       {user ? (
         <div className="w-full h-full text-center items-center">
           <OverallAnalytics counts={counts} />
+          <ToggleBarCharts
+            selectedChart={selectedChart}
+            onChartSelection={handleChartSelection}
+            monthlyData={monthlyData}
+            dailyData={dailyData}
+            yearlyData={yearlyData}
+          />
           {selectedChart === "monthly" && (
             <MonthlyAppointmentsBarChart setData={setMonthlyData} />
           )}
@@ -67,13 +74,6 @@ const DashboardPage = () => {
           {selectedChart === "yearly" && (
             <YearlyAppointmentsBarChart setData={setYearlyData} />
           )}
-          <ToggleBarCharts
-            selectedChart={selectedChart}
-            onChartSelection={handleChartSelection}
-            monthlyData={monthlyData}
-            dailyData={dailyData}
-            yearlyData={yearlyData}
-          />
           <PieChartWithCustomizedLabel counts={counts} />
         </div>
       ) : (
