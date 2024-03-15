@@ -65,9 +65,10 @@ export default function MonthlyAppointmentsBarChart({ setData }) {
           },
           {
             data: dataState.map(({ truncatedRevenue }) => truncatedRevenue),
-            label: "Revenue (in thousands)",
+            label: "Revenue",
             id: "revenue",
             color: "#333",
+            valueFormatter: ((value) => value && `${value},000`)
           },
         ]}
         xAxis={[

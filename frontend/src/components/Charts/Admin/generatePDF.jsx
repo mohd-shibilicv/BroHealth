@@ -1,18 +1,33 @@
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
-const generatePDF = (data, reportType) => {
+const generatePDF = (data, reportType, doctorName=null) => {
   const doc = new jsPDF();
 
   // Set the document title
   doc.setFontSize(18);
-  doc.text(
-    `${
-      reportType.charAt(0).toUpperCase() + reportType.slice(1)
-    } Appointments and Revenue Report`,
-    20,
-    20
-  );
+  if (doctorName) {
+    doc.text(
+      `${
+        reportType.charAt(0).toUpperCase() + reportType.slice(1)
+      } Appointments and Revenue Report`,
+      20,
+      20
+    );
+    doc.text(
+      `Dr. ${doctorName}`,
+      20,
+      30
+    );
+  } else {
+    doc.text(
+      `${
+        reportType.charAt(0).toUpperCase() + reportType.slice(1)
+      } Appointments and Revenue Report`,
+      20,
+      20
+    );
+  }
 
   // Create the table data
   const tableData = data.map((item) => {
@@ -61,7 +76,7 @@ const generatePDF = (data, reportType) => {
 
   // Add the table to the PDF
   doc.autoTable({
-    startY: 30,
+    startY: doctorName ? 40 : 30,
     head: [tableHeaders],
     body: tableData,
     styles: { font: "helvetica", fontSize: 10 },
@@ -73,7 +88,9 @@ const generatePDF = (data, reportType) => {
   });
 
   // Save the PDF
-  const fileName = `${reportType}_report_${new Date().toISOString().split('Z')[0]}.pdf`;
+  const fileName = `${reportType}_report_${
+    new Date().toISOString().split("Z")[0]
+  }.pdf`;
   doc.save(fileName);
 };
 

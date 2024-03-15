@@ -6,6 +6,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import authSlice from "../../../store/slices/auth.js";
 import useSWR from "swr";
 import axiosService from "../../../services/axios.js";
+import AppointmentsTable from "../../../components/Charts/Patient/AppointmentsTable.jsx";
+import PrescriptionsTable from "../../../components/Charts/Patient/PrescriptionsTable.jsx";
 
 const DashboardPage = () => {
   const account = useSelector((state) => state.auth.account);
@@ -22,7 +24,8 @@ const DashboardPage = () => {
     <div className="w-full">
       {user ? (
         <div className="w-full h-full text-center items-center">
-          <p className="self-center my-auto">Welcome, {user.email}</p>
+          <AppointmentsTable />
+          <PrescriptionsTable />
         </div>
       ) : (
         <>

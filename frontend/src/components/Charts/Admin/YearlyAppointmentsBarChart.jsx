@@ -65,9 +65,10 @@ export default function YearlyAppointmentsBarChart({ setData }) {
           },
           {
             data: dataState.map(({ truncateRevenue }) => truncateRevenue),
-            label: "Revenue (in thousands)",
+            label: "Revenue",
             id: "revenue",
             color: "#333",
+            valueFormatter: ((value) => value && `${value},000`)
           },
         ]}
         xAxis={[

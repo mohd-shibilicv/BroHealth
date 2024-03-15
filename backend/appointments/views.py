@@ -35,10 +35,15 @@ class AppointmentListCreateView(generics.ListCreateAPIView):
         """
         Override the queryset to return appointments based on the user role.
         """
+        limit = self.request.query_params.get('limit')
         user = self.request.user
         if Doctor.objects.filter(user=user).exists():
+            if limit:
+                return Appointment.objects.filter(doctor__user=user).order_by('-date_and_time')[:5]
             return Appointment.objects.filter(doctor__user=user)
         elif Patient.objects.filter(user=user).exists():
+            if limit:
+                return Appointment.objects.filter(patient__user=user).order_by('-date_and_time')[:5]
             return Appointment.objects.filter(patient__user=user)
         else:
             return Appointment.objects.all()
