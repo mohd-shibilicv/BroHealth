@@ -41,7 +41,9 @@ const PrescriptionForm = ({ appointment }) => {
     // Check if the file size is within the desired limit (e.g., 5MB)
     const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
     if (file.size > maxFileSize) {
-      setImageError(`Image size should not exceed ${maxFileSize / (1024 * 1024)}MB`);
+      setImageError(
+        `Image size should not exceed ${maxFileSize / (1024 * 1024)}MB`
+      );
       setPrescriptionImage(null);
       return;
     }
@@ -71,14 +73,16 @@ const PrescriptionForm = ({ appointment }) => {
   const checkPrescriptionExists = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_APP_API_URL}/prescriptions/`,
+        `${import.meta.env.VITE_APP_API_URL}/prescriptions/?appointmentId=${
+          appointment.id
+        }`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      return response.data.count > 0
+      return response.data.count > 0;
     } catch (error) {
       console.log("An error ocuured: ", error);
     }
@@ -124,12 +128,11 @@ const PrescriptionForm = ({ appointment }) => {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_APP_API_URL}/prescriptions/`,
+        `${import.meta.env.VITE_APP_API_BASE_URL}/appointments/create-prescription/`,
         formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -141,7 +144,7 @@ const PrescriptionForm = ({ appointment }) => {
     } catch (error) {
       dispatch(createPrescriptionFailure(error.message));
       setError(error.message);
-      showSimpleToast("Failed!", (type = "error"));
+      showSimpleToast("Failed!", type="error");
     } finally {
       setLoading(false);
     }
@@ -159,7 +162,11 @@ const PrescriptionForm = ({ appointment }) => {
       </Typography>
       <form onSubmit={handleSubmit}>
         {error && (
-          <Typography color="error" className="text-center py-3 bg-red-100 rounded" sx={{ mb: 2 }}>
+          <Typography
+            color="error"
+            className="text-center py-3 bg-red-100 rounded"
+            sx={{ mb: 2 }}
+          >
             {error}
           </Typography>
         )}
@@ -232,14 +239,18 @@ const PrescriptionForm = ({ appointment }) => {
             <Grid item xs={12}>
               <label className="w-full flex justify-center items-center border border-dotted border-black py-3 hover:border-indigo-600 hover:text-indigo-900 cursor-pointer">
                 <CloudUploadIcon /> &nbsp;&nbsp;Upload Prescription Image
-                <input
-                  type="file"
-                  onChange={handleImageUpload}
-                  hidden
-                />
+                <input type="file" onChange={handleImageUpload} hidden />
               </label>
             </Grid>
-            {imageError && <Typography color="error" className="text-center py-3 bg-red-100 rounded" sx={{ mt: 2, mb: 2 }}>{imageError}</Typography>}
+            {imageError && (
+              <Typography
+                color="error"
+                className="text-center py-3 bg-red-100 rounded"
+                sx={{ mt: 2, mb: 2 }}
+              >
+                {imageError}
+              </Typography>
+            )}
           </Grid>
           {prescriptionImage && (
             <Grid item xs={12}>

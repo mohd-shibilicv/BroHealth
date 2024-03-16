@@ -15,7 +15,7 @@ export default function AppointmentChart({ setData }) {
         const response = await axios.get(
           `${
             import.meta.env.VITE_APP_API_BASE_URL
-          }/admins/monthly-appointments-and-revenue/`,
+          }/doctors/monthly-appointments-and-revenue/`,
           {
             headers: {
                 Authorization: `Bearer ${token}`

@@ -122,9 +122,8 @@ class DoctorMonthlyAppointmentsAndRevenueView(APIView):
     def get(self, request):
         current_year = timezone.now().year
         appointments = (
-            Appointment.objects.filter(
-                doctor__user=self.request.user, date_and_time__year=current_year
-            )
+            Appointment.objects.filter(date_and_time__year=current_year)
+            .filter(doctor__user=request.user)
             .annotate(month=TruncMonth("date_and_time"))
             .values("month")
             .annotate(
@@ -154,7 +153,7 @@ class DoctorDailyAppointmentsAndRevenueView(APIView):
         for day in range(1, days_in_month + 1):
             date = timezone.datetime(current_year, current_month, day).date()
             appointments = Appointment.objects.filter(
-                doctor__user=self.request.user, date_and_time__date=date
+                doctor__user=request.user, date_and_time__date=date
             ).aggregate(
                 appointments_count=Count("id"),
                 paid_appointments_count=Count(
@@ -180,7 +179,7 @@ class DoctorDailyAppointmentsAndRevenueView(APIView):
 class DoctorYearlyAppointmentsAndRevenueView(APIView):
     def get(self, request):
         appointments = (
-            Appointment.objects.filter(doctor__user=self.request.user)
+            Appointment.objects.filter(doctor__user=request.user)
             .annotate(year=ExtractYear("date_and_time"))
             .values("year")
             .annotate(

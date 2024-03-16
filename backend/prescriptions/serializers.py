@@ -29,3 +29,25 @@ class PrescriptionSerializer(serializers.ModelSerializer):
             'prescription_date'
         ]
         read_only_fields = ['prescription_date']
+
+
+class CreatePrescriptionSerializer(serializers.ModelSerializer):
+    """
+    A serializer for Prescription model
+    """
+
+    class Meta:
+        model = Prescription
+        fields = [
+            'id',
+            'patient',
+            'doctor',
+            'appointment',
+            'diagnosis',
+            'medication_details',
+            'dosage',
+            'prescription_image',
+            'additional_instructions',
+            'prescription_date'
+        ]
+        read_only_fields = ['prescription_date']
