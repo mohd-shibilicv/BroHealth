@@ -32,7 +32,6 @@ def send_appointment_reminder_emails():
     # Get the current time
     ist_tz = pytz.timezone("Asia/Kolkata")
     now = timezone.now().astimezone(ist_tz)
-    appointment = Appointment.objects.get(pk=15)
 
     # Get all appointments that are due in the next 30 minutes
     upcoming_appointments = Appointment.objects.filter(
