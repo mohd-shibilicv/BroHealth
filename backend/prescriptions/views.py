@@ -23,10 +23,15 @@ class PrescriptionViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
 
     def get_queryset(self):
+        limit = self.request.query_params.get('limit')
         user = self.request.user
         if user.role == "doctor":
+            if limit:
+                return Prescription.objects.filter(doctor__user=user)[:int(limit)]
             return Prescription.objects.filter(doctor__user=user)
         elif user.role == "patient":
+            if limit:
+                return Prescription.objects.filter(doctor__user=user)[:int(limit)]
             return Prescription.objects.filter(patient__user=user)
         return Prescription.objects.all()
 
