@@ -6,18 +6,33 @@ from celery.schedules import crontab
 
 load_dotenv()
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-ROOT_BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.getenv("DEBUG")
+
+ALLOWED_HOSTS = ["127.0.0.1"]
+
 
 # Application definition
+
 INSTALLED_APPS = [
     "daphne",
+    
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "whitenoise.runserver_nostatic",
     "rest_framework",
     "drf_yasg",
@@ -25,6 +40,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "django_celery_results",
     "django_celery_beat",
+    
     "accounts.apps.AccountsConfig",
     "patients.apps.PatientsConfig",
     "doctors.apps.DoctorsConfig",
@@ -44,6 +60,17 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 10,
     "DEFAULT_FILTER_BACKENDS": ["rest_framework.filters.SearchFilter"],
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:8000",
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -78,6 +105,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "brohealth.wsgi.application"
+
 ASGI_APPLICATION = "brohealth.asgi.application"
 
 CHANNEL_LAYERS = {
@@ -89,6 +117,9 @@ CHANNEL_LAYERS = {
     },
 }
 
+# Database
+# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -99,6 +130,10 @@ DATABASES = {
         "PORT": os.getenv("DB_PORT"),
     }
 }
+
+
+# Password validation
+# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -115,22 +150,37 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+# Internationalization
+# https://docs.djangoproject.com/en/5.0/topics/i18n/
+
 LANGUAGE_CODE = "en-us"
+
 TIME_ZONE = "Asia/Kolkata"
+
 USE_I18N = True
+
 USE_TZ = True
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
 AUTH_USER_MODEL = "accounts.User"
 
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
@@ -145,12 +195,12 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=15),
     "BLACKLIST_AFTER_ROTATION": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
-    "AUTH_COOKIE": "access_token",
-    "AUTH_COOKIE_DOMAIN": None,
-    "AUTH_COOKIE_SECURE": False,
-    "AUTH_COOKIE_HTTP_ONLY": True,
-    "AUTH_COOKIE_PATH": "/",
-    "AUTH_COOKIE_SAMESITE": "Lax",
+    "AUTH_COOKIE": "access_token",  # cookie name
+    "AUTH_COOKIE_DOMAIN": None,  # specifies domain for which the cookie will be sent
+    "AUTH_COOKIE_SECURE": False,  # restricts the transmission of the cookie to only occur over secure (HTTPS) connections.
+    "AUTH_COOKIE_HTTP_ONLY": True,  # prevents client-side js from accessing the cookie
+    "AUTH_COOKIE_PATH": "/",  # URL path where cookie will be sent
+    "AUTH_COOKIE_SAMESITE": "Lax",  # specifies whether the cookie should be sent in cross site requests
 }
 
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
