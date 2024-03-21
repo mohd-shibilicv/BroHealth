@@ -10,12 +10,12 @@ export const MessageLeft = (props) => {
   const displayName = props.displayName ? props.displayName : "";
 
   // Regular expression to detect links
-  const urlRegex = /(http?:\/\/[^\s]+)/g;
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
 
   // Function to replace links with <a> tags
   const replaceLinks = (text) => {
     return text.replace(urlRegex, (match) => {
-      return `<a href="${match}" target="_blank" rel="noopener noreferrer" className="text-indigo-500 hover:underline">${match}</a>`;
+      return `<a href="${match}" target="_blank" rel="noopener noreferrer" style="color: blue; border-bottom: 1px solid blue;">${match}</a>`;
     });
   };
 

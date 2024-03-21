@@ -185,9 +185,9 @@ class AppointmentRoomList(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         if user.role == "doctor":
-            return AppointmentRoom.objects.filter(appointment__doctor__user=user)
+            return AppointmentRoom.objects.filter(appointment__doctor__user=user).exclude(appointment__status='completed')
         elif user.role == "patient":
-            return AppointmentRoom.objects.filter(appointment__patient__user=user)
+            return AppointmentRoom.objects.filter(appointment__patient__user=user).exclude(appointment__status='completed')
         return AppointmentRoom.objects.none()
 
 

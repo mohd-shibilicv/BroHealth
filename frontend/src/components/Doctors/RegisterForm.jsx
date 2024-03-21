@@ -1,19 +1,16 @@
+import { useState } from "react";
 import axios from "axios";
-import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import authSlice from "../../store/slices/auth.js";
 import "react-toastify/dist/ReactToastify.css";
 
 function RegistrationForm() {

@@ -19,10 +19,19 @@ import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 import dayjs from "dayjs";
 import QueryString from "query-string";
 
-const shouldDisableTime = (value, view) => {
+const shouldDisableTime = (value, view, selectedDate) => {
+  const currentDate = new Date();
+  const currentHour = currentDate.getHours();
   const hour = value.hour();
   if (view === "hours") {
-    return hour < 9 || hour > 18;
+    const isToday =
+      selectedDate &&
+      new Date(selectedDate).toDateString() === currentDate.toDateString();
+    if (isToday) {
+      return hour < currentHour || hour >= 18
+    } else {
+      return hour < 9 || hour > 18;
+    }
   }
   return false;
 };
@@ -466,7 +475,9 @@ const PatientAppointmentDetails = () => {
                   ampm={false}
                   onChange={handleTimeSelect}
                   sx={{ mb: 2 }}
-                  shouldDisableTime={shouldDisableTime}
+                  shouldDisableTime={(value, view) =>
+                    shouldDisableTime(value, view, selectedDate)
+                  }
                 />
               </LocalizationProvider>
             </DialogContent>
