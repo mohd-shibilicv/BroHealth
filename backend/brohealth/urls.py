@@ -24,7 +24,6 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # re_path('.*', TemplateView.as_view(template_name='index.html')),
     path('', include('accounts.urls', namespace='accounts')),
     path('api/', include(('core.routers', 'core'), namespace='core-api')),
     path('patients/', include('patients.urls', namespace='patients')),
@@ -37,7 +36,7 @@ urlpatterns = [
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if not settings.DEBUG:
