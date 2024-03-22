@@ -1,5 +1,0 @@
-release: python manage.py makemigrations && python manage.py migrate
-web: daphne -b 0.0.0.0 -p $PORT brohealth.asgi:application -v2
-worker: celery -A brohealth worker --loglevel=info
-beat: celery -A brohealth beat --scheduler django --loglevel=info
-worker: celery -A your_project worker --beat --scheduler django --loglevel=info
